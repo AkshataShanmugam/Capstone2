@@ -1,0 +1,22 @@
+services:
+  fastapi-app-google:
+    build:
+      context: .
+      dockerfile: google_search\Dockerfile
+    container_name: fastapi-app-google
+    ports:
+      - "8000:8000"  # Map host port 8000 to container port 8000
+    restart: always
+
+  fastapi_app_youtube:
+    build:
+      context: .
+      dockerfile: youtube_comment_summary\Dockerfile
+    container_name: fastapi_app_youtube
+    ports:
+      - "9000:8000"
+    restart: always
+    depends_on:
+      - fastapi-app-google  # Start 'fastapi-app-google' before this service
+    environment:
+      - GOOGLE_API_URL=http://fastapi-app-google:8000
