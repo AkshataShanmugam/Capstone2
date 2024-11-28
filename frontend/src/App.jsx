@@ -33,6 +33,7 @@ import SearchPage from './pages/SearchPage'; // Import SearchPage component
 import AnalyticsPage from './pages/AnalyticsPage'; // Import AnalyticsPage component
 import MovieGrid from './components/MovieGrid'; // Import MovieGrid
 import News from './pages/News'; // Import the News page component
+import Wishlist from './pages/Wishlist';
 
 const App = () => {
   // Check if dark mode setting exists in localStorage
@@ -87,6 +88,7 @@ const App = () => {
             <Route path="/news" element={<News />} />
             <Route path="/SearchPage" element={<SearchPage />} />
             <Route path="/AnalyticsPage" element={<AnalyticsPage />} />
+            <Route path="/wishlist" element={<Wishlist />} />
           </Routes>
         </div>
       </div>
