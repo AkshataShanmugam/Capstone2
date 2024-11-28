@@ -16,6 +16,22 @@ pipeline {
             }
         }
 
+        stage('Check Docker Compose') {
+            steps {
+                script {
+                    bat 'docker-compose --version'
+                }
+            }
+        }
+
+        stage('Check Docker Daemon') {
+            steps {
+                script {
+                    bat 'docker info'
+                }
+            }
+        }
+
         stage('Run Docker-Compose in Parallel') {
             parallel {
                 stage('Service 1: Model Services') {
