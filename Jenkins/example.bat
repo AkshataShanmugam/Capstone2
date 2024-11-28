@@ -1,6 +1,4 @@
 @echo off
-REM Stop and clean up Docker containers
-docker-compose down || (echo "Failed to stop Docker containers" && exit /b 1)
 
 REM Set environment variables for Google Search model
 cd model\google_search
