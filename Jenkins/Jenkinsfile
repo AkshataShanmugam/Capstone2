@@ -10,8 +10,7 @@ pipeline {
         stage('Initialize') {
             steps {
                 script {
-                    // Ensure workspace cleanup
-                    echo 'Initializing workspace...'
+                    echo 'Cleaning workspace and preparing for build...'
                     cleanWs()
                 }
             }
@@ -20,47 +19,33 @@ pipeline {
             parallel {
                 stage('AI Containers Setup') {
                     steps {
-                        dir('model/google_search') {
-                            script {
-                                writeFile file: '.env', text: '''
-                                SERP_API_KEY=48f5dd2aef570480a460533ece71ef9833ccbaca3fa1e8ef5721168ca6f94e96
-                                GROC_API_KEY=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
-                                '''
-                            }
-                        }
-                        dir('model/youtube_comment_summary') {
-                            script {
-                                writeFile file: '.env', text: '''
-                                YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA
-                                GROQ_API_KEY=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
-                                HUGGINGFACE_API_KEY=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
-                                '''
-                            }
-                        }
-                        dir('model/chat_with_ai') {
-                            script {
-                                writeFile file: '.env', text: '''
-                                GROC_API_KEY=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
-                                '''
-                            }
-                        }
                         dir('model') {
-                            sh 'docker-compose down'
-                            sh 'docker-compose up --build -d'
+                            bat """
+                            docker-compose down
+                            cd google_search
+                            echo SERP_API_KEY=48f5dd2aef570480a460533ece71ef9833ccbaca3fa1e8ef5721168ca6f94e96 > .env
+                            echo GROC_API_KEY=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 >> .env
+                            cd ..\\youtube_comment_summary
+                            echo YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA > .env
+                            echo GROQ_API_KEY=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 >> .env
+                            echo HUGGINGFACE_API_KEY=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 >> .env
+                            cd ..\\chat_with_ai
+                            echo GROC_API_KEY=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 >> .env
+                            cd ..
+                            docker-compose up --build -d
+                            """
                         }
                     }
                 }
                 stage('MongoDB Backend Setup') {
                     steps {
                         dir('backend') {
-                            script {
-                                writeFile file: '.env', text: '''
-                                MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true&w=majority
-                                PORT=5000
-                                '''
-                            }
-                            sh 'docker-compose down'
-                            sh 'docker-compose up --build -d'
+                            bat """
+                            docker-compose down
+                            echo MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true&w=majority > .env
+                            echo PORT=5000 >> .env
+                            docker-compose up --build -d
+                            """
                         }
                     }
                 }
@@ -70,7 +55,7 @@ pipeline {
     post {
         always {
             script {
-                echo 'Cleaning up workspace...'
+                echo 'Cleaning workspace after build...'
                 cleanWs()
             }
         }
