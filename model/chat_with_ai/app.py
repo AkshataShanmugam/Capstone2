@@ -23,7 +23,7 @@ groq_client = Groq(api_key=GROC_API_KEY)
 class ChatRequest(BaseModel):
     model: str  # Model name, e.g., "llama3-8b-8192"
     query: str  # User's input query
-# one
+
 # FastAPI endpoint for chat
 @app.post("/chat")
 async def chat_interaction(request: ChatRequest):
