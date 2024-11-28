@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         BAT_FILE = "Jenkins/example.bat" // Replace with the full path to your .bat file
-        RECIPIENT = "sharan.shanmugam2@gmail.com" // Replace with the recipient's email
+        RECIPIENT = "mincelichan@gmail.com" // Replace with the recipient's email
     }
 
     stages {
