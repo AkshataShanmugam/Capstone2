@@ -2,19 +2,46 @@ pipeline {
     agent any
 
     environment {
-        BAT_FILE = "Jenkins/example.bat" // Replace with the full path to your .bat file
-        RECIPIENT = "mincelichan@gmail.com" // Replace with the recipient's email
+        // Define any required global environment variables here
+        RECIPIENT = "mincelichan@gmail.com" // Email recipient
     }
 
     stages {
-        stage('Run .bat File') {
-            steps {
-                script {
-                    try {
-                        bat "${BAT_FILE}" // Execute the .bat file
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
+        stage('Run Docker Containers in Parallel') {
+            parallel {
+                stage('Google Search, YouTube, Chat AI Containers') {
+                    steps {
+                        script {
+                            dir('path/to/model') { // Adjust to your actual directory path
+                                sh '''
+                                docker-compose down
+                                cd google_search
+                                echo SERP_API_KEY=48f5dd2aef570480a460533ece71ef9833ccbaca3fa1e8ef5721168ca6f94e96 > .env
+                                echo GROC_API_KEY=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 >> .env
+                                cd ../youtube_comment_summary
+                                echo YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA > .env
+                                echo GROQ_API_KEY=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 >> .env
+                                echo HUGGINGFACE_API_KEY=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 >> .env
+                                cd ../chat_with_ai
+                                echo GROC_API_KEY=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 >> .env
+                                cd ..
+                                docker-compose up --build
+                                '''
+                            }
+                        }
+                    }
+                }
+                stage('Backend Container') {
+                    steps {
+                        script {
+                            dir('path/to/backend') { // Adjust to your actual directory path
+                                sh '''
+                                echo MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true&w=majority > .env
+                                echo PORT=5000 >> .env
+                                docker-compose up --build
+                                '''
+                            }
+                        }
                     }
                 }
             }
@@ -24,7 +51,7 @@ pipeline {
     post {
         success {
             echo "Build succeeded, sending email..."
-            emailext (
+            emailext(
                 subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """<p>The build was successful.</p>
                          <p>Job: ${env.JOB_NAME}</p>
@@ -34,7 +61,7 @@ pipeline {
         }
         failure {
             echo "Build failed, sending email..."
-            emailext (
+            emailext(
                 subject: "Jenkins Build FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """<p>The build failed.</p>
                          <p>Job: ${env.JOB_NAME}</p>
