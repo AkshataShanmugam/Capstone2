@@ -16,7 +16,7 @@ cd ..
 REM Set environment variables for AI chat model
 cd chat_with_ai
 echo GROC_API_KEY=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 >> .env
-cd ..
+cd ..\..
 
 REM Start Docker containers for the models in parallel
 start cmd /k "docker-compose up --build"
