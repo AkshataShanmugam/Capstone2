@@ -9,3 +9,5 @@ cd ..\chat_with_ai
 echo GROC_API_KEY=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 >> .env
 cd ..
 docker-compose up --build
+
+dir
