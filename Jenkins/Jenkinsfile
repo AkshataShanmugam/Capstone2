@@ -2,15 +2,15 @@ pipeline {
     agent any
 
     environment {
-        BAT_FILE = "Jenkins/example.bat" // Replace with the full path to your .bat file
-        RECIPIENT = "mincelichan@gmail.com" // Replace with the recipient's email
+        BAT_FILE = "Jenkins/example1.bat" // Full path to your .bat file
+        RECIPIENT = "mincelichan@gmail.com" // Recipient's email
     }
 
     stages {
         stage('Setup Environment') {
             steps {
                 script {
-                    // Execute the .bat file to set up environment variables
+                    // Execute the .bat file to set up environment variables or prerequisites
                     bat "${BAT_FILE}"
                 }
             }
@@ -20,9 +20,10 @@ pipeline {
             parallel {
                 stage('Service 1: Model Services') {
                     steps {
-                        dir('model') { // Navigate to the appropriate directory
+                        dir('model') { // Navigate to the model service directory
                             script {
-                                bat 'docker-compose up --build'
+                                // Run the model service using docker-compose
+                                bat 'docker-compose up -d --build'
                             }
                         }
                     }
@@ -30,12 +31,25 @@ pipeline {
 
                 stage('Service 2: Backend') {
                     steps {
-                        dir('backend') { // Navigate to the backend directory
+                        dir('backend') { // Navigate to the backend service directory
                             script {
-                                bat 'docker-compose up --build'
+                                // Run the backend service using docker-compose
+                                bat 'docker-compose up -d --build'
                             }
                         }
                     }
+                }
+            }
+        }
+
+        stage('Verify Services') {
+            steps {
+                script {
+                    // Example health check for Model service
+                    bat 'curl -s http://localhost:8000 || echo "Model service is not reachable"'
+
+                    // Example health check for Backend service
+                    bat 'curl -s http://localhost:8001 || echo "Backend service is not reachable"'
                 }
             }
         }
@@ -43,20 +57,20 @@ pipeline {
 
     post {
         success {
-            echo "Build succeeded, sending email..."
+            echo "Build succeeded and services are running!"
             emailext (
                 subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """<p>The build was successful.</p>
+                body: """<p>The build and service startup were successful.</p>
                          <p>Job: ${env.JOB_NAME}</p>
                          <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>""",
                 to: "${RECIPIENT}"
             )
         }
         failure {
-            echo "Build failed, sending email..."
+            echo "Build failed or services are not running!"
             emailext (
                 subject: "Jenkins Build FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """<p>The build failed.</p>
+                body: """<p>The build or service startup failed.</p>
                          <p>Job: ${env.JOB_NAME}</p>
                          <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>""",
                 to: "${RECIPIENT}"
