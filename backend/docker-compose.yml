@@ -1,29 +1,26 @@
 services:
+  # MongoDB service
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+  # Your Node.js application
   app:
     build: .
-    container_name: movie-app
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/moviesdb
+    container_name: node-app
+    env_file:
+      - .env 
     ports:
       - "5000:5000"
     depends_on:
       - mongo
-    volumes:
-      - .:/usr/src/app
     networks:
-      - movie-network
-
-  mongo:
-    image: mongo:latest
-    container_name: movie-db
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - movie-network
-
-volumes:
-  mongo-data:
+      - app-network
 
 networks:
-  movie-network:
+  app-network:
     driver: bridge
