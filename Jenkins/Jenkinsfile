@@ -7,14 +7,34 @@ pipeline {
     }
 
     stages {
-        stage('Run .bat File') {
+        stage('Setup Environment') {
             steps {
                 script {
-                    try {
-                        bat "${BAT_FILE}" // Execute the .bat file
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
+                    // Execute the .bat file to set up environment variables
+                    bat "${BAT_FILE}"
+                }
+            }
+        }
+
+        stage('Run Docker-Compose in Parallel') {
+            parallel {
+                stage('Service 1: Model Services') {
+                    steps {
+                        dir('model') { // Navigate to the appropriate directory
+                            script {
+                                bat 'docker-compose up --build'
+                            }
+                        }
+                    }
+                }
+
+                stage('Service 2: Backend') {
+                    steps {
+                        dir('backend') { // Navigate to the backend directory
+                            script {
+                                bat 'docker-compose up --build'
+                            }
+                        }
                     }
                 }
             }
