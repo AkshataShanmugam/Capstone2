@@ -33,6 +33,7 @@ services:
       - GOOGLE_API_URL=http://fastapi-app-google:8000  # API URL for Google Search
       - YOUTUBE_API_URL=http://fastapi_app_youtube:8000  # API URL for YouTube Comments
 
+## old
 # services:
 #   fastapi-app-google:
 #     build:

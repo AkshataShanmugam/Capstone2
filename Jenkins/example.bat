@@ -9,3 +9,8 @@ cd ..\chat_with_ai
 echo GROC_API_KEY=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 >> .env
 cd ..
 docker-compose up --build
+
+cd ..\backend
+echo MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true&w=majority > .env
+echo PORT=5000 >> .env
+docker-compose up --build
