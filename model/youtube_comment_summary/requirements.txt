@@ -1,7 +1,7 @@
-fastapi
-uvicorn
-requests
-google-api-python-client
-pydantic
+fastapi==0.103.2
+uvicorn==0.23.2
+requests==2.31.0
+google-api-python-client==2.100.0
+pydantic==1.10.13
 groq
-python-dotenv
+python-dotenv==1.0.0
