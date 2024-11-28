@@ -11,6 +11,7 @@ pipeline {
             steps {
                 script {
                     try {
+                        ls
                         bat "${BAT_FILE}" // Execute the .bat file
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
