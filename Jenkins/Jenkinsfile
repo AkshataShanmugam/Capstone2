@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        BAT_FILE = "example.bat" // Replace with the full path to your .bat file
+        BAT_FILE = "Jenkins/example.bat" // Replace with the full path to your .bat file
         RECIPIENT = "akshata.shanmugam@gmail.com" // Replace with the recipient's email
     }
 
@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        ls
+                        sh "ls"
                         bat "${BAT_FILE}" // Execute the .bat file
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
