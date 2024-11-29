@@ -124,7 +124,40 @@ def summarize_comments(comments: List[str]) -> str:
     combined_comments = " ".join(comments[:50])  # Limit to the first 50 comments for API input size
     try:
         response = groq_client.chat.completions.create(
-            messages=[{"role": "user", "content": f"Summarize the following YouTube comments into three categories: positive, negative, and neutral. For each category, include the key aspects or themes that are most frequently mentioned. Additionally, provide a general summary of the overall comment section. Comments: {combined_comments} Make sure to extract: 1. Key themes or common points mentioned in the positive comments. 2. Key criticisms or issues highlighted in the negative comments. 3.Neutral observations or comments that do not lean toward either side. Provide a clear and concise summary for each category, as well as an overall summary of the comment section."}],
+            messages = [
+                {
+                    "role": "user",
+                    "content": f"""Summarize the following YouTube comments into three categories: positive, negative, and neutral. For each category, include the key aspects or themes that are most frequently mentioned. Additionally, provide a general summary of the overall comment section.
+
+                    Comments: {combined_comments}
+
+                    Make sure to extract:
+                    1. Key themes or common points mentioned in the positive comments.
+                    2. Key criticisms or issues highlighted in the negative comments.
+                    3. Neutral observations that do not lean toward either side.
+
+                    Provide a clear and concise summary for each category, as well as an overall summary of the comment section. Give the reply in a JSON property-compatible format.
+
+                    Example Format:
+                    {{
+                        "summary": {{
+                            "Positive Comments": {{
+                            "Key themes": [],
+                            "Summary": ""
+                            }},
+                            "Negative Comments": {{
+                            "Key criticisms": [],
+                            "Summary": ""
+                            }},
+                            "Neutral Comments": {{
+                            "Key points": [],
+                            "Summary": ""
+                            }},
+                            "Overall Summary": ""
+                        }}
+                    }}"""
+                }
+            ],
             model="llama3-8b-8192"
         )
         summary = response.choices[0].message.content
