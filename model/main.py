@@ -14,7 +14,7 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
 )
-
+ 
 # Mounting sub-applications to different routes
 app.mount("/google", google_app)
 app.mount("/youtube", youtube_app)
