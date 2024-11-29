@@ -116,7 +116,7 @@ const News = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-100 p-6 bg-gradient-to-b from-indigo-100 to-white p-6">
+    <div className="min-h-screen bg-gray-100 p-6 bg-gradient-to-b from-indigo-100 to-white .p-6">
       <div className="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg flex">
         {/* Main Content */}
         <div className="w-3/4 pr-8">
