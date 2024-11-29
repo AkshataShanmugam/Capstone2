@@ -15,8 +15,7 @@ const Sidebar = () => {
     { name: 'Home', icon: HomeIcon, path: '/' },
     { name: 'News', icon: DocumentTextIcon, path: '/news' },
     { name: 'Search&nbsp;Results', icon: FilmIcon, path: '/SearchPage' },
-    { name: 'Analytics', icon: VideoCameraIcon, path: '/AnalyticsPage' },
-    { name: 'Favorites', icon: VideoCameraIcon, path: '/favorites' },
+    { name: 'Favorites', icon: VideoCameraIcon, path: '/wishlist' },
     { name: 'Chat', icon: TvIcon, path: '/chat' },
   ];
 
