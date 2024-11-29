@@ -21,7 +21,8 @@ const SearchPage = () => {
 
     try {
       // Simulate fetching data from API
-      const response = await fetch(`/results.json`);
+      // const response = await fetch(`/results.json`);
+      const response = await fetch(`/fetch_data`);
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }

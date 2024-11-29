@@ -36,7 +36,8 @@ const News = () => {
     setHasSummarized(false); // Reset summarization status when a new search is done
 
     try {
-      const response = await fetch(`/results.json`);
+      // const response = await fetch(`/results.json`);
+      const response = await fetch(`/fetch_data`);
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }
