@@ -15,12 +15,9 @@ const Sidebar = () => {
     { name: 'Home', icon: HomeIcon, path: '/' },
     { name: 'News', icon: DocumentTextIcon, path: '/news' },
     { name: 'Search&nbsp;Results', icon: FilmIcon, path: '/SearchPage' },
-<<<<<<< Updated upstream
     { name: 'Favorites', icon: VideoCameraIcon, path: '/wishlist' },
-=======
     { name: 'Analytics', icon: VideoCameraIcon, path: '/AnalyticsPage' },
     { name: 'Wishlist', icon: VideoCameraIcon, path: '/wishlist' },
->>>>>>> Stashed changes
     { name: 'Chat', icon: TvIcon, path: '/chat' },
   ];
 
