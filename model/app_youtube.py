@@ -160,15 +160,7 @@ async def analyze_sentiment_for_video(request: VideoSearchRequest):
             "summary": summary
         }
 
-        print("Sentiment analysis and summarization completed")
-        combined_result = {
-    "positive": sentiment_result_distilbert["positive"],
-    "negative": sentiment_result_distilbert["negative"],
-    "neutral": sentiment_result_distilbert["neutral"],
-    "summary": summary
-}
-
-# Ensure that this matches the structure expected by the frontend
+        # Ensure that this matches the structure expected by the frontend
         print("Returning result:", combined_result)
         return SentimentAnalysisResponse(**combined_result)
     except HTTPException as e:
