@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Analytics from "../components/Analytics"; // Import the Analytics component
-import YouTubeData from "../components/YoutubeData"; // Import the YouTubeData component
+import YouTubeAnalytics from "../components/YouTubeAnalytics"; // Import the YouTubeAnalytics component
 import "../styles/SearchPage.css"; // Import the CSS file
 
 const SearchPage = () => {
@@ -21,7 +21,6 @@ const SearchPage = () => {
 
     try {
       // Simulate fetching data from API
-      // const response = await fetch(`/fetch_data?keyword=${keyword}`);
       const response = await fetch(`/results.json`);
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
@@ -60,23 +59,25 @@ const SearchPage = () => {
               YouTube Analytics
             </button>
           </div>
-          
-          {/* Search Bar and Button Section */}
-          <div className="search-section">
-            <input
-              type="text"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              className="search-input"
-              placeholder="Search..."
-            />
-            <button
-              onClick={handleSearch}
-              className="search-button"
-            >
-              Search
-            </button>
-          </div>
+
+          {/* Conditionally render search bar only if not "youtube_analytics" */}
+          {selectedOption !== "youtube_analytics" && (
+            <div className="search-section">
+              <input
+                type="text"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                className="search-input"
+                placeholder="Search..."
+              />
+              <button
+                onClick={handleSearch}
+                className="search-button"
+              >
+                Search
+              </button>
+            </div>
+          )}
         </div>
 
         {/* HR line to separate options from content */}
@@ -171,7 +172,7 @@ const SearchPage = () => {
 
         {/* Conditionally Render YouTube Analytics Data */}
         {selectedOption === "youtube_analytics" && !loading && !error && (
-          <YouTubeData/>
+          <YouTubeAnalytics />
         )}
       </div>
     </div>
