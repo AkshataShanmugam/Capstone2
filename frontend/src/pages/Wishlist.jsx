@@ -22,7 +22,7 @@ const Wishlist = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-indigo-800">My Wishlist</h1>
           <Link
-            to="/"
+            to="/news"
             className="flex items-center text-indigo-600 hover:text-indigo-800 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -33,7 +33,7 @@ const Wishlist = () => {
           <div className="text-center py-12">
             <Heart className="w-16 h-16 text-indigo-300 mx-auto mb-4" />
             <p className="text-xl text-gray-600">Your wishlist is empty.</p>
-            <Link to="/news" className="mt-4 inline-block text-indigo-600 hover:underline">
+            <Link to="/" className="mt-4 inline-block text-indigo-600 hover:underline">
               Discover some news to add
             </Link>
           </div>
