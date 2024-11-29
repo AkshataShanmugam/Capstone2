@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const News = () => {
   const [data, setData] = useState(null); // Holds the current data (original news)
@@ -6,11 +6,42 @@ const News = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [keyword, setKeyword] = useState("");
-  const [inputFocused, setInputFocused] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [showSummarizedContent, setShowSummarizedContent] = useState(false);
   const [hasSummarized, setHasSummarized] = useState(false); // Track if summarization has been done
   const [summarizedData, setSummarizedData] = useState(null); // Store the summarized data
+
+  // Check if there's any stored data in localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem("newsData");
+    const savedSummarizedData = localStorage.getItem("summarizedData");
+    const savedKeyword = localStorage.getItem("keyword");
+
+    if (savedData) {
+      setData(JSON.parse(savedData));
+    }
+
+    if (savedSummarizedData) {
+      setSummarizedData(JSON.parse(savedSummarizedData));
+    }
+
+    if (savedKeyword) {
+      setKeyword(savedKeyword);
+    }
+  }, []);
+
+  // Store the data in localStorage whenever it changes
+  useEffect(() => {
+    if (data) {
+      localStorage.setItem("newsData", JSON.stringify(data));
+    }
+    if (summarizedData) {
+      localStorage.setItem("summarizedData", JSON.stringify(summarizedData));
+    }
+    if (keyword) {
+      localStorage.setItem("keyword", keyword);
+    }
+  }, [data, summarizedData, keyword]);
 
   // Handle change in keyword input
   const handleKeywordChange = (e) => {
@@ -31,13 +62,14 @@ const News = () => {
     setHasSummarized(false); // Reset summarization status when a new search is done
 
     try {
-      const response = await fetch(`/fetch_data_test?keyword=${keyword}&limit=9`);
+      // Fetch data (this can be replaced with your actual API call)
+      const response = await fetch(`/results.json`);
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }
 
       const jsonData = await response.json();
-      console.log(jsonData)
+      console.log(jsonData);
       setData(jsonData); // Set the fetched data to state
       setOriginalData(jsonData); // Store the original data for "Back to Articles"
       setSummarizedData(jsonData.summarized_news); // Store summarized news data from the API response
@@ -60,15 +92,9 @@ const News = () => {
       }, 3000); // Simulate a 3-second loading time for the summarization process
     } else {
       // Toggle between showing summarized or original content
-      if (showSummarizedContent) {
-        setShowSummarizedContent(false); // Hide summarized content
-      } else {
-        setShowSummarizedContent(true); // Show summarized content
-      }
+      setShowSummarizedContent(!showSummarizedContent);
     }
   };
-
-  
 
   const renderFormattedContent = (summarizedData) => {
     const formatText = (text) => {
@@ -84,10 +110,9 @@ const News = () => {
               {title}
             </h3>
           );
-                  } else {
+        } else {
           // This section is content (even indexed sections after split)
           const content = sections[i].trim();
-          console.log(content)
           
           // Separate numbered points in the content
           const points = content.split('\n').map((line) => {
@@ -106,19 +131,18 @@ const News = () => {
       return formattedSections;
     };
     
+    return (
+      <section className="mt-6">
+        <div>
+          {/* Render formatted content */}
+          {formatText(summarizedData)}
+        </div>
+      </section>
+    );
+  };
+
   return (
-    <section className="mt-6 ">
-      <div>
-        {/* Render formatted content */}
-        {formatText(summarizedData)}
-      </div>
-    </section>
-  );
-};
-  
-  
-  return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 bg-gradient-to-b from-indigo-100 to-white p-6">
       <div className="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg flex">
         {/* Main Content */}
         <div className="w-3/4 pr-8">
@@ -146,7 +170,7 @@ const News = () => {
             {!isSummarizing && !showSummarizedContent && (
               <div className="flex flex-col justify-center items-center h-full mt-8">
                 <form 
-                  onSubmit={(e) => { handleSubmit(e); setInputFocused(true); }} 
+                  onSubmit={(e) => { handleSubmit(e); }} 
                   className="w-full max-w-md mx-auto transition-all duration-500 ease-in-out"
                 >
                   <input
@@ -178,19 +202,16 @@ const News = () => {
             </section>
           )}
 
-{/* Show Summarized Content */}
-{showSummarizedContent && !isSummarizing && summarizedData && (
-  <section className="mt-12">
-    <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Summarized Content</h2>
-
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      {/* Render formatted content with titles and points */}
-      {renderFormattedContent(summarizedData)}
-      </div>
-  </section>
-)}
-
-
+          {/* Show Summarized Content */}
+          {showSummarizedContent && !isSummarizing && summarizedData && (
+            <section className="mt-12">
+              <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Summarized Content</h2>
+              <div className="bg-white p-4 rounded-lg shadow-md">
+                {/* Render formatted content with titles and points */}
+                {renderFormattedContent(summarizedData)}
+              </div>
+            </section>
+          )}
 
           {/* Show Original Articles */}
           {!showSummarizedContent && !loading && !isSummarizing && data && (

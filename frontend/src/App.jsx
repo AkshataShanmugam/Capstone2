@@ -1,36 +1,81 @@
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import React from "react";
-// import Home from "./pages/Home";
-// import About from "./pages/About";
-// import Prediction from "./pages/Prediction";
-// import SignUp from "./pages/SignUp";
-// import SignIn from "./pages/SignIn";
-// import Header from "./components/Header";
-// import Footer from "./components/Footer";
+// // import React, { useEffect, useState } from 'react';
 
-// export default function App() {
-//   return ( 
-//   <BrowserRouter>
-//   <Header />
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/prediction" element={<Prediction />} />
-//         <Route path="/signin" element={<SignIn />} />
-//         <Route path="/signup" element={<SignUp />} />
-//         <Route path="/about" element={<About />} />
-//       </Routes>
-//       <Footer />  
-//       </BrowserRouter>
-//   );
-// }
+// // export default function App() {
+// //   const [movies, setMovies] = useState([]); // State to store the fetched data
+// //   const [error, setError] = useState(null); // State to store errors, if any
 
+// //   useEffect(() => {
+// //     // Test fetching data from your server (GET request)
+// //     const fetchMovies = async () => {
+// //       try {
+// //         const response = await fetch('http://localhost:5000/api/scripts'); // Replace with your backend API URL
+// //         if (!response.ok) {
+// //           throw new Error('Network response was not ok');
+// //         }
+// //         const data = await response.json();  // Parse the JSON data from the response
+// //         setMovies(data);  // Set the fetched data to state
+// //       } catch (error) {
+// //         setError(error.message);  // Set error message to state if fetching fails
+// //       }
+// //     };
+
+// //     // Fetch data when the component mounts
+// //     fetchMovies();
+// //   }, []); // Empty dependency array to only run this effect once on mount
+
+// //   // Render UI based on the fetched data or any errors
+// //   if (error) {
+// //     return <div>Error: {error}</div>;
+// //   }
+
+// //   return (
+// //     <div>
+// //       <h1>Fetched Movies Data</h1>
+// //       {movies.length === 0 ? (
+// //         <p>Loading...</p>
+// //       ) : (
+// //         <ul>
+// //           {movies.map((movie, index) => (
+// //             <li key={index}>{movie.title}</li> // Display the movie title (adjust field name based on your API response)
+// //           ))}
+// //         </ul>
+// //       )}
+// //     </div>
+// //   );
+// // }
+
+
+// // import { Routes, Route } from "react-router-dom";
+// // import React from "react";
+// // import Home from "./pages/Home";
+// // import About from "./pages/About";
+// // import Prediction from "./pages/Prediction";
+// // import SignUp from "./pages/SignUp";
+// // import SignIn from "./pages/SignIn";
+// // import Header from "./components/Header";
+// // import Footer from "./components/Footer";
+
+// // export default function App() {
+// //   return ( 
+// //     <>
+// //       <Header />
+// //       <Routes>
+// //         <Route path="/" element={<Home />} />
+// //         <Route path="/prediction" element={<Prediction />} />
+// //         <Route path="/signin" element={<SignIn />} />
+// //         <Route path="/signup" element={<SignUp />} />
+// //         <Route path="/about" element={<About />} />
+// //       </Routes>
+// //       <Footer />  
+// //     </>
+// //   );
+// // }
 
 
 import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom'; // Import Routes and Route, no need for Router
 import Sidebar from './components/Sidebar'; // Import Sidebar
 import SearchPage from './pages/SearchPage'; // Import SearchPage component
-import AnalyticsPage from './pages/AnalyticsPage'; // Import AnalyticsPage component
 import MovieGrid from './components/MovieGrid'; // Import MovieGrid
 import News from './pages/News'; // Import the News page component
 import Wishlist from './pages/Wishlist';
@@ -65,7 +110,7 @@ const App = () => {
       {/* Sidebar */}
       <Sidebar sidebarExpanded={sidebarExpanded} setSidebarExpanded={setSidebarExpanded} />
 
-      {/* Main content area */}
+      {/* Main caontent area */}
       <div
         className={`flex-1 flex flex-col overflow-y-auto transition-all duration-300 ease-in-out`}
         style={{
@@ -87,7 +132,6 @@ const App = () => {
             {/* News page route */}
             <Route path="/news" element={<News />} />
             <Route path="/SearchPage" element={<SearchPage />} />
-            <Route path="/AnalyticsPage" element={<AnalyticsPage />} />
             <Route path="/wishlist" element={<Wishlist />} />
           </Routes>
         </div>
@@ -97,3 +141,5 @@ const App = () => {
 };
 
 export default App;
+
+

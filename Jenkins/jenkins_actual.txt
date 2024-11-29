@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    environment {
+        BAT_FILE = "Jenkins/example.bat" // Replace with the full path to your .bat file
+        RECIPIENT = "mincelichan@gmail.com" // Replace with the recipient's email
+    }
+
+    stages {
+        stage('Run .bat File') {
+            steps {
+                script {
+                    try {
+                        bat "${BAT_FILE}" // Execute the .bat file
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Build succeeded, sending email..."
+            emailext (
+                subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<p>The build was successful.</p>
+                         <p>Job: ${env.JOB_NAME}</p>
+                         <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>""",
+                to: "${RECIPIENT}"
+            )
+        }
+        failure {
+            echo "Build failed, sending email..."
+            emailext (
+                subject: "Jenkins Build FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<p>The build failed.</p>
+                         <p>Job: ${env.JOB_NAME}</p>
+                         <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>""",
+                to: "${RECIPIENT}"
+            )
+        }
+    }
+}

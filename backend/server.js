@@ -4,6 +4,8 @@ const cors = require('cors'); // Import CORS
 const scriptRoutes = require('./routes/movieRoutes');
 require('dotenv').config();
 
+console.log(process.env); 
+
 const app = express();
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
