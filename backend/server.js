@@ -14,7 +14,7 @@ app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI) // Connect to MongoDB
   .then(() => {
     console.log('MongoDB connected');
   })
