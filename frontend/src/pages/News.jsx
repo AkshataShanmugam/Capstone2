@@ -1,49 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { Plus, Heart } from 'lucide-react';
 
 const News = () => {
-  const [data, setData] = useState(null); // Holds the current data (original news)
-  const [originalData, setOriginalData] = useState(null); // Holds the original data for "Back to Articles"
+  const [data, setData] = useState(null);
+  const [originalData, setOriginalData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [keyword, setKeyword] = useState("");
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [showSummarizedContent, setShowSummarizedContent] = useState(false);
-  const [hasSummarized, setHasSummarized] = useState(false); // Track if summarization has been done
-  const [summarizedData, setSummarizedData] = useState(null); // Store the summarized data
+  const [hasSummarized, setHasSummarized] = useState(false);
+  const [summarizedData, setSummarizedData] = useState(null);
+  const [wishlist, setWishlist] = useState([]);
 
-  // Check if there's any stored data in localStorage on mount
   useEffect(() => {
-    const savedData = localStorage.getItem("newsData");
-    const savedSummarizedData = localStorage.getItem("summarizedData");
-    const savedKeyword = localStorage.getItem("keyword");
-
-    if (savedData) {
-      setData(JSON.parse(savedData));
-    }
-
-    if (savedSummarizedData) {
-      setSummarizedData(JSON.parse(savedSummarizedData));
-    }
-
-    if (savedKeyword) {
-      setKeyword(savedKeyword);
-    }
+    const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    setWishlist(storedWishlist);
   }, []);
 
-  // Store the data in localStorage whenever it changes
-  useEffect(() => {
-    if (data) {
-      localStorage.setItem("newsData", JSON.stringify(data));
-    }
-    if (summarizedData) {
-      localStorage.setItem("summarizedData", JSON.stringify(summarizedData));
-    }
-    if (keyword) {
-      localStorage.setItem("keyword", keyword);
-    }
-  }, [data, summarizedData, keyword]);
-
-  // Handle change in keyword input
   const handleKeywordChange = (e) => {
     setKeyword(e.target.value);
   };
@@ -62,17 +36,15 @@ const News = () => {
     setHasSummarized(false); // Reset summarization status when a new search is done
 
     try {
-      // Fetch data (this can be replaced with your actual API call)
       const response = await fetch(`/results.json`);
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }
 
       const jsonData = await response.json();
-      console.log(jsonData);
-      setData(jsonData); // Set the fetched data to state
-      setOriginalData(jsonData); // Store the original data for "Back to Articles"
-      setSummarizedData(jsonData.summarized_news); // Store summarized news data from the API response
+      setData(jsonData);
+      setOriginalData(jsonData);
+      setSummarizedData(jsonData.summarized_news);
     } catch (err) {
       setError(`Error loading data: ${err.message}`);
     } finally {
@@ -80,18 +52,16 @@ const News = () => {
     }
   };
 
-  // Handle the Summarize button click
   const handleSummarize = () => {
     if (!hasSummarized) {
-      setIsSummarizing(true); // Show shimmer effect
-      setShowSummarizedContent(true); // Show summarized content
+      setIsSummarizing(true);
+      setShowSummarizedContent(true);
 
       setTimeout(() => {
-        setHasSummarized(true); // Mark that summarization has been done
-        setIsSummarizing(false); // Hide shimmer
-      }, 3000); // Simulate a 3-second loading time for the summarization process
+        setHasSummarized(true);
+        setIsSummarizing(false);
+      }, 3000);
     } else {
-      // Toggle between showing summarized or original content
       setShowSummarizedContent(!showSummarizedContent);
     }
   };
@@ -103,28 +73,24 @@ const News = () => {
       
       for (let i = 0; i < sections.length; i++) {
         if (i % 2 === 1) {
-          // This section is a title (odd indexed sections after split)
           const title = sections[i].trim();
           formattedSections.push(
-            <h3 className="text-2xl font-bold mt-14 mb-4 p-2 border-b-2 border-gray-300">
+            <h3 key={`title-${i}`} className="text-2xl font-bold mt-14 mb-4 p-2 border-b-2 border-gray-300">
               {title}
             </h3>
           );
         } else {
-          // This section is content (even indexed sections after split)
           const content = sections[i].trim();
-          
-          // Separate numbered points in the content
-          const points = content.split('\n').map((line) => {
+          const points = content.split('\n').map((line, index) => {
             if (line.trim()) {
               return (
-                <li className="list-inside mt-2">{line.trim()}</li>
+                <li key={`point-${i}-${index}`} className="list-inside mt-2">{line.trim()}</li>
               );
             }
             return null;
           });
           
-          formattedSections.push(<ul>{points}</ul>);
+          formattedSections.push(<ul key={`content-${i}`}>{points}</ul>);
         }
       }
       
@@ -132,15 +98,23 @@ const News = () => {
     };
     
     return (
-      <section className="mt-6">
+      <section className="mt-6 ">
         <div>
-          {/* Render formatted content */}
           {formatText(summarizedData)}
         </div>
       </section>
     );
   };
 
+  const toggleWishlist = (article) => {
+    const updatedWishlist = wishlist.some(item => item.link === article.link)
+      ? wishlist.filter(item => item.link !== article.link)
+      : [...wishlist, article];
+    
+    setWishlist(updatedWishlist);
+    localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+  };
+  
   return (
     <div className="min-h-screen bg-gray-100 p-6 bg-gradient-to-b from-indigo-100 to-white p-6">
       <div className="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg flex">
@@ -202,16 +176,18 @@ const News = () => {
             </section>
           )}
 
-          {/* Show Summarized Content */}
+{/* Show Summarized Content */}
           {showSummarizedContent && !isSummarizing && summarizedData && (
             <section className="mt-12">
               <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Summarized Content</h2>
+
               <div className="bg-white p-4 rounded-lg shadow-md">
-                {/* Render formatted content with titles and points */}
                 {renderFormattedContent(summarizedData)}
               </div>
             </section>
           )}
+
+
 
           {/* Show Original Articles */}
           {!showSummarizedContent && !loading && !isSummarizing && data && (
@@ -222,14 +198,29 @@ const News = () => {
                   {data.news.map((article, index) => (
                     <div 
                       key={index} 
-                      className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition cursor-pointer hover:text-indigo-600 hover:border-indigo-600 border-b border-gray-200" 
-                      onClick={() => window.open(article.link, "_blank")} 
+                      className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition cursor-pointer hover:text-indigo-600 hover:border-indigo-600 border-b border-gray-200 relative" 
                     >
-                      <h3 className="text-xl font-medium text-gray-700 mb-2">{article.title}</h3>
-                      <p className="text-sm text-gray-500 mb-2">Published on: {article.date}</p>
-                      {article.thumbnail && (
-                        <img src={article.thumbnail} alt="Article Thumbnail" className="w-full h-32 object-cover rounded-lg mb-4" />
-                      )}
+                      <div onClick={() => window.open(article.link, "_blank")}>
+                        <h3 className="text-xl font-medium text-gray-700 mb-2">{article.title}</h3>
+                        <p className="text-sm text-gray-500 mb-2">Published on: {article.date}</p>
+                        {article.thumbnail && (
+                          <img src={article.thumbnail} alt="Article Thumbnail" className="w-full h-32 object-cover rounded-lg mb-4" />
+                        )}
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleWishlist(article);
+                        }}
+                        className="absolute bottom-2 right-2 p-1 rounded-full bg-white shadow-md hover:bg-gray-100"
+                        aria-label={wishlist.some(item => item.link === article.link) ? "Remove from wishlist" : "Add to wishlist"}
+                      >
+                        {wishlist.some(item => item.link === article.link) ? (
+                          <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                        ) : (
+                          <Plus className="w-5 h-5 text-gray-500" />
+                        )}
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -267,3 +258,4 @@ const News = () => {
 };
 
 export default News;
+

@@ -8,7 +8,7 @@ const AuthToggle = () => {
 
   return (
     <div className="flex justify-center my-6">
-      <div className="bg-gray-200 dark:bg-gray-700 rounded-full p-1 flex">
+      <div className="bg-gray-400 dark:bg-gray-700 rounded-full p-1 flex">
         <Link to="/signin">
           <motion.button
             className="relative px-4 py-2 rounded-full text-sm font-medium focus:outline-none"

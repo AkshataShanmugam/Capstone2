@@ -33,7 +33,7 @@ const Wishlist = () => {
           <div className="text-center py-12">
             <Heart className="w-16 h-16 text-indigo-300 mx-auto mb-4" />
             <p className="text-xl text-gray-600">Your wishlist is empty.</p>
-            <Link to="/" className="mt-4 inline-block text-indigo-600 hover:underline">
+            <Link to="/news" className="mt-4 inline-block text-indigo-600 hover:underline">
               Discover some news to add
             </Link>
           </div>
