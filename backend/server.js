@@ -14,12 +14,13 @@ app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch(err => {
+    console.log('MongoDB connection error:', err);
+  });
 
 app.use('/api/scripts', scriptRoutes);
 app.use('/api/auth', authRoutes);
