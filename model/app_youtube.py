@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from googleapiclient.discovery import build
-from groq import Groq
+from groq import Groq as _Groq
 from typing import List, Dict
 import requests
 import re
@@ -16,10 +16,9 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 
-
-app = FastAPI()
+app_youtube = FastAPI()
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
-groq_client = Groq(api_key=GROQ_API_KEY)
+groq_client = _Groq(api_key=GROQ_API_KEY)
 HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models"
 
 HEADERS = {
@@ -44,7 +43,7 @@ def extract_video_id(video_url: str) -> str:
     else:
         raise HTTPException(status_code=400, detail="Invalid YouTube URL")
 
-@app.get("/extract-video-id/")
+@app_youtube.get("/extract-video-id/")
 async def extract_video_id_from_url(video_url: str):
     video_id = extract_video_id(video_url)
     return {"video_id": video_id}
@@ -135,7 +134,7 @@ def summarize_comments(comments: List[str]) -> str:
         raise HTTPException(status_code=500, detail=f"Error in summarizing comments with Groq: {str(e)}")
 
 # Endpoint for sentiment analysis and summarization
-@app.post("/analyze-sentiment/", response_model=SentimentAnalysisResponse)
+@app_youtube.post("/analyze-sentiment/", response_model=SentimentAnalysisResponse)
 async def analyze_sentiment_for_video(request: VideoSearchRequest):
     try:
         print(request.video_url)

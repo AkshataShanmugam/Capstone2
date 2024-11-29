@@ -1,8 +1,14 @@
 fastapi
 uvicorn
+python-dotenv
+
 pytrends
 selenium
 serpapi
-python-dotenv
 google-search-results
+
+requests
+google-api-python-client
+pydantic
+
 groq

@@ -8,16 +8,16 @@ from groq import Groq
 load_dotenv()
 
 # FastAPI app instance
-app = FastAPI()
+app_google = FastAPI()
 
-# Fetch API keys from .env file
+# # Fetch API keys from .env file
 SERP_API_KEY = os.getenv("SERP_API_KEY")
-GROC_API_KEY = os.getenv("GROC_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-groq_client = Groq(api_key=GROC_API_KEY)
+if not SERP_API_KEY or not GROQ_API_KEY:
+    raise ValueError("API keys not found. Please set SERP_API_KEY and GROQ_API_KEY in the .env file.")
 
-if not SERP_API_KEY or not GROC_API_KEY:
-    raise ValueError("API keys not found. Please set SERP_API_KEY and GROC_API_KEY in the .env file.")
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 # Function to fetch Google News results
 def fetch_google_news(keyword: str):
@@ -100,7 +100,7 @@ def fetch_google_trends_interest_by_region(keyword: str):
     return compared_breakdown_by_region
 
 # FastAPI endpoint for data
-@app.get("/fetch_data")
+@app_google.get("/fetch_data")
 async def fetch_data(
     keyword: str = Query(..., description="Keyword to search for")
 ):

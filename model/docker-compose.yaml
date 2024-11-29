@@ -1,56 +1,12 @@
 services:
-  fastapi-app-google:
-    build:
-      context: .
-      dockerfile: google_search/Dockerfile
-    container_name: fastapi-app-google
+  app:
+    build: .
+    container_name: fastapi_app
     ports:
-      - "8000:8000"  # Map host port 8000 to container port 8000
+      - "8000:8000"
+    env_file:
+      - .env
 
-  fastapi_app_youtube:
-    build:
-      context: .
-      dockerfile: youtube_comment_summary/Dockerfile
-    container_name: fastapi_app_youtube
-    ports:
-      - "9000:8000"  # Map host port 9000 to container port 8000
-    depends_on:
-      - fastapi-app-google  # Start 'fastapi-app-google' before this service
-    environment:
-      - GOOGLE_API_URL=http://fastapi-app-google:8000
-
-  chat_with_ai:
-    build:
-      context: .
-      dockerfile: chat_with_ai/Dockerfile  
-    container_name: chat_with_ai
-    ports:
-      - "7000:8000"  # Map host port 7000 to container port 7000
-    depends_on:
-      - fastapi-app-google  # Start 'fastapi-app-google' first
-      - fastapi_app_youtube  # Start 'fastapi_app_youtube' first
-    environment:
-      - GOOGLE_API_URL=http://fastapi-app-google:8000  # API URL for Google Search
-      - YOUTUBE_API_URL=http://fastapi_app_youtube:8000  # API URL for YouTube Comments
-
-## old
-# services:
-#   fastapi-app-google:
-#     build:
-#       context: .
-#       dockerfile: google_search\Dockerfile
-#     container_name: fastapi-app-google
-#     ports:
-#       - "8000:8000"  # Map host port 8000 to container port 8000
-
-#   fastapi_app_youtube:
-#     build:
-#       context: .
-#       dockerfile: youtube_comment_summary\Dockerfile
-#     container_name: fastapi_app_youtube
-#     ports:
-#       - "9000:8000"
-#     depends_on:
-#       - fastapi-app-google  # Start 'fastapi-app-google' before this service
-#     environment:
-#       - GOOGLE_API_URL=http://fastapi-app-google:8000
+networks:
+  default:
+    driver: bridge

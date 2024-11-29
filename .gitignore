@@ -1,4 +1,1 @@
-/model/scraped_data
-/model/youtube_comment_summary/.env
-/model/google_search/.env
-/model/chat_with_ai/.env
+/model/.env

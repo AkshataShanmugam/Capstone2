@@ -8,16 +8,16 @@ from groq import Groq
 load_dotenv()
 
 # FastAPI app instance
-app = FastAPI()
+app_chat_ai = FastAPI()
 
 # Fetch API key from .env file
-GROC_API_KEY = os.getenv("GROC_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-if not GROC_API_KEY:
-    raise ValueError("GROC_API_KEY not found. Please set it in the .env file.")
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY not found. Please set it in the .env file.")
 
 # Initialize Groq client
-groq_client = Groq(api_key=GROC_API_KEY)
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 # Request model for chat interaction
 class ChatRequest(BaseModel):
@@ -25,7 +25,7 @@ class ChatRequest(BaseModel):
     query: str  # User's input query
 
 # FastAPI endpoint for chat
-@app.post("/chat")
+@app_chat_ai.post("/chat")
 async def chat_interaction(request: ChatRequest):
     try:
         response = groq_client.chat.completions.create(
