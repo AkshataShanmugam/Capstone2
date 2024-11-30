@@ -21,12 +21,13 @@ const SearchPage = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/google/fetch_data`);
+      const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);;
+      
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }
       const data = await response.json();
-      setSearchData(data.search);
+      setSearchData(data);
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
     } finally {
@@ -74,7 +75,7 @@ const SearchPage = () => {
           </div>
 
           {/* Conditionally render search bar for "Top Searches" or "Google Trends" */}
-          {selectedOption !== "youtube_analytics" && (
+          {selectedOption === "top_searches" && (
             <div className="search-section">
               <input
                 type="text"
@@ -120,8 +121,12 @@ const SearchPage = () => {
         )}
 
         {/* Render Analytics component if "Google Trends" is selected */}
-        {selectedOption === "google_trends" && !loading && !error && (
+        {selectedOption === "google_trends" && searchData && !loading && !error && (
           <Analytics keyword={keyword} searchData={searchData} />
+        )}
+
+        {!searchData && (
+          <p> Please enter your Movie Name/URL in the search field </p>
         )}
 
         {/* Render search results, only if "Top Searches" is selected */}
@@ -129,10 +134,10 @@ const SearchPage = () => {
           <div className="search-container">
             <div className="search-results">
               <p className="results-header">
-                Top {searchData.organic_results.length} results for "{keyword}"
+                Top {searchData.search.organic_results.length} results for "{keyword}"
               </p>
               <div className="results-grid">
-                {searchData.organic_results.map((result, index) => (
+                {searchData.search.organic_results.map((result, index) => (
                   <div key={index} className="result-card">
                     <div className="result-thumbnail">
                       {result.thumbnail ? (

@@ -11,30 +11,37 @@ const Analytics = ({ keyword, searchData }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    if (searchData && searchData.trends) {
+      setTrendsData(searchData.trends);
+    }
+  }, [searchData]);
+  // console.log(trendsData);
+
   // Fetching trends data from the API
-  const fetchTrendsData = async () => {
-    if (!keyword.trim()) {
-      setError("Please enter a search keyword.");
-      return;
-    }
+  // const fetchTrendsData = async () => {
+    // if (!keyword.trim()) {
+    //   setError("Please enter a search keyword.");
+    //   return;
+    // }
 
-    setLoading(true); // Show loading spinner when the search is triggered
-    setError(null); // Reset previous errors
-    try {
-      // const response = await fetch(`/fetch_data?keyword=${keyword}`);
-      const response = await fetch(`/results.json`);
+    // setLoading(true); // Show loading spinner when the search is triggered
+    // setError(null); // Reset previous errors
+    // try {
+    //   // const response = await fetch(`/fetch_data?keyword=${keyword}`);
+    //   const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);;
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch trends data. Status: ${response.status}`);
-      }
-      const data = await response.json();
-      setTrendsData(data.trends); // Assuming the response contains a "trends" object
-    } catch (err) {
-      setError(err.message || "Failed to load trends data.");
-    } finally {
-      setLoading(false); // Hide the loading spinner
-    }
-  };
+    //   if (!response.ok) {
+    //     throw new Error(`Failed to fetch trends data. Status: ${response.status}`);
+    //   }
+    //   const data = await response.json();
+    //   setTrendsData(data.trends); // Assuming the response contains a "trends" object
+    // } catch (err) {
+    //   setError(err.message || "Failed to load trends data.");
+    // } finally {
+    //   setLoading(false); // Hide the loading spinner
+    // }
+  // };
 
   // Prepare data for chart.js
   const chartData = trendsData
@@ -56,11 +63,11 @@ const Analytics = ({ keyword, searchData }) => {
       }
     : {};
 
-  useEffect(() => {
-    if (keyword) {
-      fetchTrendsData(); // Fetch the trends data whenever the keyword changes
-    }
-  }, [keyword]);
+  // useEffect(() => {
+  //   if (keyword) {
+  //     fetchTrendsData(); // Fetch the trends data whenever the keyword changes
+  //   }
+  // }, [keyword]);
 
   return (
     <div className="bg-gray-50 text-gray-900 min-h-screen p-8 font-inter">
