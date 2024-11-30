@@ -37,7 +37,7 @@ const News = () => {
 
     try {
       // const response = await fetch(`/results.json`);
-      const response = await fetch(`/fetch_data`);
+      const response = await fetch(`/google/fetch_data/`);
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }
