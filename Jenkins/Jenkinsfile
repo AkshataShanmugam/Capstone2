@@ -7,7 +7,7 @@ pipeline {
     }
 
     stages {
-        stage('Run Docker Containers in Parallel') {
+        stage('Run Docker Containers in Parallel - Backend') {
             steps {
                 script {
                     try {
@@ -21,16 +21,17 @@ pipeline {
                                     echo GROQ_API_KEY=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 >> .env
                                     echo YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA >> .env
                                     echo HUGGINGFACE_API_KEY=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 >> .env
-                                    docker-compose up --build
+                                    docker-compose up -d --build
                                     """
                                 }
                             },
                             "Run Backend Container": {
                                 dir('backend') {
                                     bat """
+                                    docker-compose down
                                     echo MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true^&w=majority > .env
                                     echo PORT=5000 >> .env
-                                    docker-compose up --build
+                                    docker-compose up -d --build
                                     """
                                 }
                             }
@@ -38,6 +39,20 @@ pipeline {
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                         throw e
+                    }
+                }
+            }
+        }
+
+        stage('Configure Frontend and Run') {
+            steps {
+                script {
+                    dir('frontend') {
+                        bat """
+                        docker-compose down
+                        echo VITE_GOOGLE_CLIENT_ID=381230721825-bgkpl6in88b5o05hhi537qp4vf9bgqo1.apps.googleusercontent.com > .env
+                        docker-compose up --build
+                        """
                     }
                 }
             }
