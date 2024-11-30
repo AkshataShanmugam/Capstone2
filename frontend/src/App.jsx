@@ -82,6 +82,7 @@ import Wishlist from './pages/Wishlist';
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Terms from "./pages/Terms";
+import Chat from './pages/Chat';
 
 const App = () => {
   // Check if dark mode setting exists in localStorage
@@ -139,6 +140,7 @@ const App = () => {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/chat" element={<Chat />} />
           </Routes>
         </div>
       </div>
