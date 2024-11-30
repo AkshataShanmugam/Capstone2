@@ -61,24 +61,64 @@ const Chat = () => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
-
+  
     const userMessage = { text: inputMessage, sender: 'user' };
     setMessages((prev) => [...prev, userMessage]);
     setInputMessage('');
-
+  
     // Reset textarea height
     e.target.querySelector('textarea').style.height = 'auto';
-
+  
     try {
-      const response = await axios.post('/api/chat', { message: inputMessage });
-      const botMessage = { text: response.data.message, sender: 'bot' };
+      // Prepare conversation history as a prompt
+      const formattedHistory = messages
+        .map((msg) => `${msg.sender === 'user' ? 'User' : 'Bot'}: ${msg.text}`)
+        .join('\n');
+  
+      const fullPrompt = `
+        The following is a conversation with a helpful robot that can only answer questions about movies. 
+        The robot cannot answer questions outside this domain.
+
+        Here is the conversation history: ${formattedHistory}
+        Current user prompt: ${inputMessage}
+        Response:
+      `;
+  
+      // Make API call with the full conversation history and the current prompt
+      const response = await fetch(`http://localhost:8000/chat/chat/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "llama3-8b-8192",
+          query: fullPrompt,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const data = await response.json();
+  
+      const botMessage = { text: data.response || 'Sorry, I did not understand.', sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]);
+  
+      // Optionally store conversation history in localStorage
+      localStorage.setItem("chatHistory", JSON.stringify([...messages, userMessage, botMessage]));
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = { text: 'Sorry, I encountered an error.', sender: 'bot' };
       setMessages((prev) => [...prev, errorMessage]);
     }
   };
+
+  useEffect(() => {
+    const savedHistory = localStorage.getItem("chatHistory");
+    if (savedHistory) {
+      setMessages(JSON.parse(savedHistory));
+    }
+  }, []);  
+  
 
   // Scroll to bottom effect (unchanged)
   useEffect(() => {
