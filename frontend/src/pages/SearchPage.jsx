@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Analytics from "../components/Analytics";
+import Analytics from "../components/Trends";
 import YouTubeAnalytics from "../components/YouTubeAnalytics";
 import "../styles/SearchPage.css";
 
