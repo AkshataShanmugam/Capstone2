@@ -79,9 +79,10 @@ import SearchPage from './pages/SearchPage'; // Import SearchPage component
 import MovieGrid from './components/MovieGrid'; // Import MovieGrid
 import News from './pages/News'; // Import the News page component
 import Wishlist from './pages/Wishlist';
-// import SignIn from "./pages/SignIn";
-// import SignUp from "./pages/SignUp";
-// import Terms from "./pages/Terms";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+import Chat from './pages/Chat';
+import Terms from "./pages/Terms";
 
 
 const App = () => {
@@ -137,9 +138,10 @@ const App = () => {
             <Route path="/" element={<News />} />
             <Route path="/SearchPage" element={<SearchPage />} />
             <Route path="/wishlist" element={<Wishlist />} />
-            {/* <Route path="/signin" element={<SignIn />} />
+            <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/terms" element={<Terms />} /> */}
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/chat" element={<Chat />} />
           </Routes>
         </div>
       </div>
