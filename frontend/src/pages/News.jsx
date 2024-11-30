@@ -37,7 +37,7 @@ const News = () => {
 
     try {
       // const response = await fetch(`/results.json`);
-      const response = await fetch(`/fetch_data`);
+      const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }
@@ -115,7 +115,17 @@ const News = () => {
     setWishlist(updatedWishlist);
     localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
   };
-  
+
+  // Skeleton loader for individual cards
+  const renderCardSkeleton = () => (
+    <div className="bg-white p-4 rounded-lg shadow-md animate-pulse hover:shadow-lg transition cursor-pointer hover:text-indigo-600 hover:border-indigo-600 border-b border-gray-200 relative">
+      <div className="w-full h-32 bg-gray-300 rounded-lg mb-4"></div>
+      <div className="h-6 bg-gray-300 rounded mb-2"></div>
+      <div className="h-4 bg-gray-300 rounded mb-2"></div>
+      <div className="h-4 bg-gray-300 rounded mb-4"></div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-100 p-6 bg-gradient-to-b from-indigo-100 to-white .p-6">
       <div className="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg flex">
@@ -177,7 +187,7 @@ const News = () => {
             </section>
           )}
 
-{/* Show Summarized Content */}
+          {/* Show Summarized Content */}
           {showSummarizedContent && !isSummarizing && summarizedData && (
             <section className="mt-12">
               <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Summarized Content</h2>
@@ -187,8 +197,6 @@ const News = () => {
               </div>
             </section>
           )}
-
-
 
           {/* Show Original Articles */}
           {!showSummarizedContent && !loading && !isSummarizing && data && (
@@ -231,6 +239,13 @@ const News = () => {
             </section>
           )}
 
+          {/* Show skeleton loader when loading */}
+          {loading && !data && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, index) => renderCardSkeleton(index))}
+            </div>
+          )}
+
           {/* Display Error Message */}
           {error && <p className="text-red-500 text-center mt-4">{error}</p>}
         </div>
@@ -259,4 +274,3 @@ const News = () => {
 };
 
 export default News;
-

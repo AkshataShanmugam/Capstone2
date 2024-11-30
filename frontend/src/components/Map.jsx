@@ -3,45 +3,56 @@ import { VectorMap } from "react-jvectormap";
 
 const Map = ({ keyword, searchData }) => {
   const [mapData, setMapData] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!keyword.trim()) {
-        setError("Please enter a search keyword.");
-        setLoading(false);
-        return;
-      }
+    if (searchData && searchData.trends) {
+      const mappedData = searchData.trends.interest_by_region.reduce((acc, item) => {
+        acc[item.geo] = parseInt(item.extracted_value, 10);
+        return acc;
+      }, {});
+      setMapData(mappedData);
+    }
+  }, [searchData]);
+    
 
-      setLoading(true); // Show loading spinner when the search is triggered
-      setError(null); // Reset previous errors
-      try {
-        const response = await fetch(`/results.json`);
-        // const response = await fetch(`/fetch_data?keyword=${keyword}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch trends data. Status: ${response.status}`);
-        }
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (!keyword.trim()) {
+  //       setError("Please enter a search keyword.");
+  //       setLoading(false);
+  //       return;
+  //     }
 
-        const data = await response.json();
-        console.log(data.trends.interest_by_region);
+  //     setLoading(true); // Show loading spinner when the search is triggered
+      // setError(null); // Reset previous errors
+    //   try {
+    //     const response = await fetch(`/results.json`);
+    //     // const response = await fetch(`/fetch_data?keyword=${keyword}`);
+    //     if (!response.ok) {
+    //       throw new Error(`Failed to fetch trends data. Status: ${response.status}`);
+    //     }
 
-        // Process the data to create the mapData object
-        const mappedData = data.trends.interest_by_region.reduce((acc, item) => {
-          acc[item.geo] = parseInt(item.extracted_value, 10);
-          return acc;
-        }, {});
+    //     const data = await response.json();
+    //     console.log(data.trends.interest_by_region);
 
-        setMapData(mappedData); // Set the map data
-        setLoading(false); // Set loading to false once the data is fetched
-      } catch (error) {
-        setError(error.message); // Handle errors
-        setLoading(false);
-      }
-    };
+    //     // Process the data to create the mapData object
+    //     const mappedData = data.trends.interest_by_region.reduce((acc, item) => {
+    //       acc[item.geo] = parseInt(item.extracted_value, 10);
+    //       return acc;
+    //     }, {});
 
-    fetchData();
-  }, [keyword]); // Dependency array now includes keyword
+    //     setMapData(mappedData); // Set the map data
+    //     setLoading(false); // Set loading to false once the data is fetched
+    //   } catch (error) {
+    //     setError(error.message); // Handle errors
+    //     setLoading(false);
+    //   }
+    // };
+
+  //   fetchData();
+  // }, [keyword]); // Dependency array now includes keyword
 
   // Handle country click event
   const handleClick = (e, countryCode) => {

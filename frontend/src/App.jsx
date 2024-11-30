@@ -79,10 +79,9 @@ import SearchPage from './pages/SearchPage'; // Import SearchPage component
 import MovieGrid from './components/MovieGrid'; // Import MovieGrid
 import News from './pages/News'; // Import the News page component
 import Wishlist from './pages/Wishlist';
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import Terms from "./pages/Terms";
-import Chat from './pages/Chat';
+// import SignIn from "./pages/SignIn";
+// import SignUp from "./pages/SignUp";
+// import Terms from "./pages/Terms";
 
 const App = () => {
   // Check if dark mode setting exists in localStorage
@@ -124,23 +123,22 @@ const App = () => {
         <div className="flex flex-col p-6 flex-grow">
           <Routes>
             {/* Default home page route */}
-            <Route path="/" element={
+            {/* <Route path="/" element={
               <div>
                 <h2 className="text-3xl font-semibold text-white dark:text-gray-100 mb-4">Top Rated</h2>
                 <MovieGrid category="top-rated" />
                 <h2 className="text-3xl font-semibold text-white dark:text-gray-100 mt-8 mb-4">Best of Action</h2>
                 <MovieGrid category="action" />
               </div>
-            } />
+            } /> */}
 
             {/* News page route */}
-            <Route path="/news" element={<News />} />
+            <Route path="/" element={<News />} />
             <Route path="/SearchPage" element={<SearchPage />} />
             <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/signin" element={<SignIn />} />
+            {/* <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/chat" element={<Chat />} />
+            <Route path="/terms" element={<Terms />} /> */}
           </Routes>
         </div>
       </div>

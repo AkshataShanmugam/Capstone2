@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import Analytics from "../components/Analytics"; // Import the Analytics component
-import YouTubeAnalytics from "../components/YouTubeAnalytics"; // Import the YouTubeAnalytics component
-import "../styles/SearchPage.css"; // Import the CSS file
+import Analytics from "../components/Analytics";
+import YouTubeAnalytics from "../components/YouTubeAnalytics";
+import "../styles/SearchPage.css";
 
 const SearchPage = () => {
   const [searchData, setSearchData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [keyword, setKeyword] = useState(""); // Search keyword state
+  const [youtubeUrl, setYoutubeUrl] = useState(""); // YouTube URL state
   const [selectedOption, setSelectedOption] = useState("top_searches"); // Default to Top Searches
 
   const handleSearch = async () => {
@@ -20,19 +21,32 @@ const SearchPage = () => {
     setError(null);
 
     try {
-      // Simulate fetching data from API
-      // const response = await fetch(`/results.json`);
-      const response = await fetch(`/fetch_data`);
+      const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);
+      // const response = await fetch(`/results.json?keyword=${encodeURIComponent(keyword)}`);
+      
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }
       const data = await response.json();
-      setSearchData(data.search);
+      setSearchData(data);
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const isValidYouTubeUrl = (url) => {
+    const regex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+    return regex.test(url);
+  };
+  
+  const handleYouTubeSubmit = () => {
+    if (!youtubeUrl || !isValidYouTubeUrl(youtubeUrl)) {
+      setError("Please enter a valid YouTube URL.");
+      return;
+    }
+    setError(null);
   };
 
   return (
@@ -61,8 +75,8 @@ const SearchPage = () => {
             </button>
           </div>
 
-          {/* Conditionally render search bar only if not "youtube_analytics" */}
-          {selectedOption !== "youtube_analytics" && (
+          {/* Conditionally render search bar for "Top Searches" or "Google Trends" */}
+          {selectedOption === "top_searches" && (
             <div className="search-section">
               <input
                 type="text"
@@ -71,11 +85,24 @@ const SearchPage = () => {
                 className="search-input"
                 placeholder="Search..."
               />
-              <button
-                onClick={handleSearch}
-                className="search-button"
-              >
+              <button onClick={handleSearch} className="search-button">
                 Search
+              </button>
+            </div>
+          )}
+
+          {/* Input for YouTube URL when "YouTube Analytics" is selected */}
+          {selectedOption === "youtube_analytics" && (
+            <div className="youtube-input-section">
+              <input
+                type="text"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                className="search-input"
+                placeholder="Enter YouTube Video URL..."
+              />
+              <button onClick={handleYouTubeSubmit} className="search-button">
+                Analyze
               </button>
             </div>
           )}
@@ -85,11 +112,7 @@ const SearchPage = () => {
         <hr className="separator" />
 
         {/* Error message */}
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
         {/* Loading Spinner */}
         {loading && (
@@ -99,8 +122,12 @@ const SearchPage = () => {
         )}
 
         {/* Render Analytics component if "Google Trends" is selected */}
-        {selectedOption === "google_trends" && !loading && !error && (
+        {selectedOption === "google_trends" && searchData && !loading && !error && (
           <Analytics keyword={keyword} searchData={searchData} />
+        )}
+
+        {!searchData && (
+          <p> Please enter your Movie Name/URL in the search field </p>
         )}
 
         {/* Render search results, only if "Top Searches" is selected */}
@@ -108,10 +135,10 @@ const SearchPage = () => {
           <div className="search-container">
             <div className="search-results">
               <p className="results-header">
-                Top {searchData.organic_results.length} results for "{keyword}"
+                Top {searchData.search.organic_results.length} results for "{keyword}"
               </p>
               <div className="results-grid">
-                {searchData.organic_results.map((result, index) => (
+                {searchData.search.organic_results.map((result, index) => (
                   <div key={index} className="result-card">
                     <div className="result-thumbnail">
                       {result.thumbnail ? (
@@ -172,8 +199,8 @@ const SearchPage = () => {
         )}
 
         {/* Conditionally Render YouTube Analytics Data */}
-        {selectedOption === "youtube_analytics" && !loading && !error && (
-          <YouTubeAnalytics />
+        {selectedOption === "youtube_analytics" && youtubeUrl && isValidYouTubeUrl(youtubeUrl) && (
+          <YouTubeAnalytics videoUrl={youtubeUrl} />
         )}
       </div>
     </div>
