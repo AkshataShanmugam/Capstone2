@@ -84,4 +84,29 @@ router.post('/google-signup', async (req, res) => {
   }
 });
 
+// New route to get the username from the JWT token
+router.get('/get-username', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    // Specify the allowed algorithm for verification (HS256 in this case)
+    const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
+    const user = await User.findById(decoded.id); // Fetch the user from the database using the user ID in the token
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+
+    res.json({ username: user.username }); // Return the username to the frontend
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
+
 module.exports = router;

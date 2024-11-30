@@ -91,15 +91,15 @@ const Chat = () => {
         {isLoading ? (
           <ShimmerText text="Loading..." />
         ) : (
-          <h1 className="text-4xl font-serif">
+          <h2 className="text-2xl font-bold">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-pink-400 to-purple-400">
               Hello, {username}!
             </span>
-          </h1>
+          </h2>
         )}
-        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400">
+        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400">
           Movie-Bot
-        </h2>
+        </h1>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 space-y-3">

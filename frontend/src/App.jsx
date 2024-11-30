@@ -83,6 +83,7 @@ import Wishlist from './pages/Wishlist';
 // import SignUp from "./pages/SignUp";
 // import Terms from "./pages/Terms";
 
+
 const App = () => {
   // Check if dark mode setting exists in localStorage
   const savedDarkMode = localStorage.getItem('darkMode') === 'true';
