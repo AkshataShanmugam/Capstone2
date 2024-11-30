@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 
-const YouTubeData = ({ keyword }) => {
+const YouTubeData = ({ videoUrl }) => {
   const [data, setData] = useState(null); // To store the fetched data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+console.log(videoUrl)
   // Fetch the YouTube data on component mount
   useEffect(() => {
     const fetchYouTubeData = async () => {
       try {
-        const response = await fetch("/youtube_results.json", {
+        const response = await fetch(`http://localhost:8000/youtube/analyze-sentiment/`, {
+        // const response = await fetch("/youtube_results.json", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ video_url: "https://www.youtube.com/watch?v=CljcOFN8EYA" }),
+          // body: JSON.stringify({ video_url: "https://www.youtube.com/watch?v=CljcOFN8EYA" }),
+          body: JSON.stringify({ video_url: videoUrl }),
         });
 
         if (!response.ok) {
@@ -22,7 +24,7 @@ const YouTubeData = ({ keyword }) => {
         const result = await response.json();
         console.log("Response JSON:", result);
 
-        if (!result.summary) {
+        if (!result.positive || !result.negative) {
           throw new Error("Invalid response structure.");
         }
 
@@ -123,7 +125,7 @@ const YouTubeData = ({ keyword }) => {
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-        YouTube Analytics for <span className="font-bold text-gray-600">"{keyword}"</span>
+        YouTube Analytics for <span className="font-bold text-gray-600">"{videoUrl}"</span>
       </h2>
 
       {/* Render the Overall Summary */}
