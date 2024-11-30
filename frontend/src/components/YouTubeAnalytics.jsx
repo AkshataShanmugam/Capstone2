@@ -1,30 +1,43 @@
 import React, { useState, useEffect } from "react";
 
-const YouTubeData = ({ keyword }) => {
+const YouTubeData = ({ videoUrl }) => {
   const [data, setData] = useState(null); // To store the fetched data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch the YouTube data on component mount
   useEffect(() => {
     const fetchYouTubeData = async () => {
       try {
-        const response = await fetch("/sample_result.json"); // Path to the JSON file
+        // const response = await fetch(`http://192.168.255.104:8000/youtube/analyze-sentiment/`, {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({ video_url: videoUrl }),
+        // });
+
+        const response = await fetch('youtube_results.json'); // Fetch local JSON file
+
+        console.log(response)
+    
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.status}`);
         }
+    
         const result = await response.json();
-        setData(result); // Store the fetched data in state
+        console.log("Response JSON:", result);
+        if (!result.positive || !result.negative) {
+          throw new Error("Invalid response structure.");
+        }
+    
+        setData(result);
       } catch (err) {
-        setError("Error fetching YouTube analytics data.");
-        console.error(err);
+        setError(err.message || "Error fetching YouTube analytics data.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchYouTubeData();
-  }, []); // Empty dependency array to run once on mount
+  }, [videoUrl]); // Dependency array includes `videoUrl`
 
   if (loading) {
     return <div className="text-center text-xl text-gray-500">Loading YouTube Analytics...</div>;
@@ -34,30 +47,34 @@ const YouTubeData = ({ keyword }) => {
     return <div className="text-center text-xl text-red-500">{error}</div>;
   }
 
-  // Helper function to render list items dynamically from the data
   const renderListItems = (data) => {
-    return data.map((item, index) => <li key={index} className="text-gray-700">{item}</li>);
+    return data.map((item, index) => (
+      <li key={index} className="text-gray-700">
+        {item}
+      </li>
+    ));
   };
-
+  
   // Helper function to extract sections from the summary string in the JSON data
   const extractSummarySection = (sectionTitle) => {
-    const section = data.summary.split(`**${sectionTitle}**`);
-    return section[1] ? section[1].split("**")[0] : '';
+    const sectionRegex = new RegExp(`\\*\\*${sectionTitle}:\\*\\*(.*?)\\*\\*`, 's');
+    const match = data.summary.match(sectionRegex);
+    return match ? match[1].trim() : '';
   };
-
-  // Remove the first line if it matches the title
-  const cleanSummary = (sectionContent, title) => {
-    const lines = sectionContent.split("\n").filter(item => item);
-    if (lines[0] === title) {
-      lines.shift(); // Remove the title line if it matches
-    }
-    return lines;
+  
+  // Helper function to clean and format the summary for list rendering
+  const cleanSummary = (sectionContent) => {
+    return sectionContent
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith("*")) // Only include bullet points
+      .map((line) => line.replace(/^\*+\s*/, "")); // Remove the leading '*'
   };
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-        YouTube Analytics for <span className="font-bold text-gray-600">"{keyword}"</span>
+        YouTube Analytics for <span className="font-bold text-gray-600">"{videoUrl}"</span>
       </h2>
 
       <div className="comment-section mb-8">
@@ -68,11 +85,8 @@ const YouTubeData = ({ keyword }) => {
           </h3>
           <p className="text-lg font-semibold">Key themes or common points:</p>
           <ul className="list-disc pl-6 space-y-2">
-            {renderListItems(cleanSummary(extractSummarySection("Positive Comments"), "Key themes or common points:"))}
+          {renderListItems(cleanSummary(extractSummarySection("Positive Comments")))}
           </ul>
-          <p className="mt-3 text-gray-700">
-            <strong>Summary:</strong> {extractSummarySection("Positive Comments")}
-          </p>
         </div>
 
         <hr className="my-6 border-t border-gray-300" />
@@ -84,11 +98,8 @@ const YouTubeData = ({ keyword }) => {
           </h3>
           <p className="text-lg font-semibold">Key criticisms or issues:</p>
           <ul className="list-disc pl-6 space-y-2">
-            {renderListItems(cleanSummary(extractSummarySection("Negative Comments"), "Key criticisms or issues:"))}
+            {renderListItems(cleanSummary(extractSummarySection("Negative Comments"), "Key criticisms:"))}
           </ul>
-          <p className="mt-3 text-gray-700">
-            <strong>Summary:</strong> {extractSummarySection("Negative Comments")}
-          </p>
         </div>
 
         <hr className="my-6 border-t border-gray-300" />
@@ -100,18 +111,17 @@ const YouTubeData = ({ keyword }) => {
           </h3>
           <p className="text-lg font-semibold">Key observations or comments:</p>
           <ul className="list-disc pl-6 space-y-2">
-            {renderListItems(cleanSummary(extractSummarySection("Neutral Comments"), "Key observations or comments:"))}
+            {renderListItems(cleanSummary(extractSummarySection("Neutral Observations"), "Key observations:"))}
           </ul>
-          <p className="mt-3 text-gray-700">
-            <strong>Summary:</strong> {extractSummarySection("Neutral Comments")}
-          </p>
         </div>
       </div>
 
       {/* Overall Summary */}
       <div className="overall-summary p-4 bg-gray-50 border-l-4 border-gray-300 rounded-lg">
-        <h3 className="text-2xl font-bold text-gray-700 mb-3">Overall Summary</h3>
-        <p className="text-gray-700">{extractSummarySection("Overall Summary")}</p>
+          <p className="text-lg font-semibold">Overall Summary:</p>
+          <ul className="list-disc pl-6 space-y-2">
+            {renderListItems(cleanSummary(extractSummarySection("Neutral Observations"), "Key observations:"))}
+          </ul>
       </div>
     </div>
   );

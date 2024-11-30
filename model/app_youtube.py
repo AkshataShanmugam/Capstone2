@@ -8,6 +8,7 @@ import re
 import time
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -34,6 +35,40 @@ class SentimentAnalysisResponse(BaseModel):
     negative: int
     neutral: int
     summary: str
+
+def parse_and_format_json(raw_text: str) -> dict:
+    """
+    Converts a raw prompt response string to a valid JSON object.
+    
+    Args:
+        raw_text (str): Raw text output from the prompt, which includes JSON-like structure.
+
+    Returns:
+        dict: A properly formatted JSON object.
+    """
+    try:
+        # Remove any unwanted line breaks or whitespace
+        cleaned_text = raw_text.replace("\n", "").strip()
+
+        # Locate the JSON-like structure and load it
+        start_idx = cleaned_text.find('{')
+        end_idx = cleaned_text.rfind('}') + 1
+
+        if start_idx == -1 or end_idx == -1:
+            raise ValueError("No JSON-like structure found in the text")
+
+        # Extract JSON substring
+        json_like_str = cleaned_text[start_idx:end_idx]
+
+        # Parse JSON
+        formatted_json = json.loads(json_like_str)
+        return formatted_json
+
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON format: {e}")
+
+    except Exception as e:
+        raise ValueError(f"Error parsing JSON: {e}")
 
 def extract_video_id(video_url: str) -> str:
     video_id_pattern = re.compile(r'(?:https?://)?(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)([A-Za-z0-9_-]{11})')
@@ -120,51 +155,40 @@ def analyze_sentiment_huggingface(model: str, comments: List[str]) -> Dict[str, 
     return {"positive": positive, "negative": negative, "neutral": neutral}
 
 # Function to summarize comments using Groq API
-def summarize_comments(comments: List[str]) -> str:
+def summarize_comments(comments: List[str]) -> dict:
     combined_comments = " ".join(comments[:50])  # Limit to the first 50 comments for API input size
     try:
         response = groq_client.chat.completions.create(
-            messages = [
+            messages=[
                 {
                     "role": "user",
                     "content": f"""Summarize the following YouTube comments into three categories: positive, negative, and neutral. For each category, include the key aspects or themes that are most frequently mentioned. Additionally, provide a general summary of the overall comment section.
 
-                    Comments: {combined_comments}
+Comments: {combined_comments}
 
-                    Make sure to extract:
-                    1. Key themes or common points mentioned in the positive comments.
-                    2. Key criticisms or issues highlighted in the negative comments.
-                    3. Neutral observations that do not lean toward either side.
+Make sure to extract:
+1. Key themes or common points mentioned in the positive comments as full sentences.
+2. Key criticisms or issues highlighted in the negative comments as full sentences.
+3. Neutral observations that do not lean toward either side as full sentences.
 
-                    Provide a clear and concise summary for each category, as well as an overall summary of the comment section. Give the reply in a JSON property-compatible format.
+Provide the output in JSON object in the EXACT format without unnecessary formatting or text or line breaks.
 
-                    Example Format:
-                    {{
-                        "summary": {{
-                            "Positive Comments": {{
-                            "Key themes": [],
-                            "Summary": ""
-                            }},
-                            "Negative Comments": {{
-                            "Key criticisms": [],
-                            "Summary": ""
-                            }},
-                            "Neutral Comments": {{
-                            "Key points": [],
-                            "Summary": ""
-                            }},
-                            "Overall Summary": ""
-                        }}
-                    }}"""
-                }
-            ],
+Example Format:{{"summary":{{"Positive Comments":{{"Key themes": [],"Summary": "A concise summary of positive comments."}},"Negative Comments": {{"Key criticisms": [],"Summary": "A concise summary of negative comments."}},"Neutral Comments": {{"Key points": [],"Summary": "A concise summary of neutral comments."}},"Overall Summary": "A concise overall summary of the comment section"}}}}"""}],
             model="llama3-8b-8192"
         )
-        summary = response.choices[0].message.content
-        print("Comments summarized using Groq")
-        return summary
+        summary_raw = response.choices[0].message.content
+        print("Raw summary:", summary_raw)
+
+        # Parse the raw response into JSON
+        summary_json = parse_and_format_json(summary_raw)
+        print("Parsed summary:", summary_json)
+        return summary_json
+
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=f"Error parsing JSON: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error in summarizing comments with Groq: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error in summarizing comments: {str(e)}")
+
 
 # Endpoint for sentiment analysis and summarization
 @app_youtube.post("/analyze-sentiment/", response_model=SentimentAnalysisResponse)
