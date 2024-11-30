@@ -8,15 +8,15 @@ const YouTubeData = ({ videoUrl }) => {
   useEffect(() => {
     const fetchYouTubeData = async () => {
       try {
-        // const response = await fetch(`http://192.168.255.104:8000/youtube/analyze-sentiment/`, {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({ video_url: videoUrl }),
-        // });
+        const response = await fetch(`http://localhost:8000/youtube/analyze-sentiment/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ video_url: videoUrl }),
+        });
 
-        const response = await fetch('youtube_results.json'); // Fetch local JSON file
+        // const response = await fetch('youtube_results.json'); // Fetch local JSON file
 
-        console.log(response)
+        // console.log(response)
     
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.status}`);
