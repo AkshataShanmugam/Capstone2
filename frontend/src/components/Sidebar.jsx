@@ -12,12 +12,11 @@ const Sidebar = () => {
   const navigate = useNavigate(); // hook to navigate in react-router
 
   const menuItems = [
-    { name: 'Home', icon: HomeIcon, path: '/' },
-    { name: 'News', icon: DocumentTextIcon, path: '/news' },
+    // { name: 'Home', icon: HomeIcon, path: '/' },
+    { name: 'News', icon: DocumentTextIcon, path: '/' },
     { name: 'Search&nbsp;Results', icon: FilmIcon, path: '/SearchPage' },
     { name: 'Favorites', icon: VideoCameraIcon, path: '/wishlist' },
     { name: 'Analytics', icon: VideoCameraIcon, path: '/AnalyticsPage' },
-    { name: 'Wishlist', icon: VideoCameraIcon, path: '/wishlist' },
     { name: 'Chat', icon: TvIcon, path: '/chat' },
   ];
 

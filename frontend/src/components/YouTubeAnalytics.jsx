@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from "react";
 
-const YouTubeData = ({ videoUrl }) => {
+const YouTubeData = ({ keyword }) => {
   const [data, setData] = useState(null); // To store the fetched data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch the YouTube data on component mount
   useEffect(() => {
     const fetchYouTubeData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/youtube/analyze-sentiment/`, {
+        const response = await fetch("/youtube_results.json", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ video_url: videoUrl }),
+          body: JSON.stringify({ video_url: "https://www.youtube.com/watch?v=CljcOFN8EYA" }),
         });
 
-        // const response = await fetch('youtube_results.json'); // Fetch local JSON file
-
-        // console.log(response)
-    
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.status}`);
         }
-    
+
         const result = await response.json();
         console.log("Response JSON:", result);
-        if (!result.positive || !result.negative) {
+
+        if (!result.summary) {
           throw new Error("Invalid response structure.");
         }
-    
+
         setData(result);
       } catch (err) {
         setError(err.message || "Error fetching YouTube analytics data.");
@@ -35,9 +33,8 @@ const YouTubeData = ({ videoUrl }) => {
         setLoading(false);
       }
     };
-
     fetchYouTubeData();
-  }, [videoUrl]); // Dependency array includes `videoUrl`
+  }, []); // Empty dependency array to run once on mount
 
   if (loading) {
     return <div className="text-center text-xl text-gray-500">Loading YouTube Analytics...</div>;
@@ -47,81 +44,104 @@ const YouTubeData = ({ videoUrl }) => {
     return <div className="text-center text-xl text-red-500">{error}</div>;
   }
 
-  const renderListItems = (data) => {
-    return data.map((item, index) => (
-      <li key={index} className="text-gray-700">
-        {item}
-      </li>
-    ));
+  // Helper function to clean up the content by removing the asterisks
+  const cleanAsterisks = (content) => {
+    return content.replace(/\*/g, '').trim(); // Remove all '*' characters
   };
-  
-  // Helper function to extract sections from the summary string in the JSON data
-  const extractSummarySection = (sectionTitle) => {
-    const sectionRegex = new RegExp(`\\*\\*${sectionTitle}:\\*\\*(.*?)\\*\\*`, 's');
-    const match = data.summary.match(sectionRegex);
-    return match ? match[1].trim() : '';
+
+  // Helper function to extract a section based on its title
+  const extractSection = (sectionTitle) => {
+    const regex = new RegExp(`\\*\\*${sectionTitle}:\\*\\*([\\s\\S]*?)(?=\\*\\*|$)`, "i");
+    const match = data.summary.match(regex);
+    if (match) {
+      let sectionContent = match[1].trim();
+
+      // Clean up asterisks from the section content
+      sectionContent = cleanAsterisks(sectionContent);
+
+      // Remove the first line from the section content
+      const lines = sectionContent.split("\n");
+      lines.shift(); // Remove the first line
+      sectionContent = lines.join("\n").trim(); // Rejoin the remaining lines
+
+      return sectionContent;
+    }
+    return ""; // Return empty if no match
   };
-  
-  // Helper function to clean and format the summary for list rendering
-  const cleanSummary = (sectionContent) => {
-    return sectionContent
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line.startsWith("*")) // Only include bullet points
-      .map((line) => line.replace(/^\*+\s*/, "")); // Remove the leading '*'
+
+  // Function to render the section content with enhanced "Summary" style
+  const renderSection = (sectionName, bgColor, borderColor, textColor) => {
+    const sectionContent = extractSection(sectionName);
+    if (!sectionContent) return null;
+
+    // Separate points from the summary
+    const sectionContentWithoutSummary = sectionContent.split("Summary:")[0]; // Get points only
+    const summaryText = sectionContent.split("Summary:")[1]?.trim(); // Get the summary only
+
+    // Render the content with points as bullet list and summary as highlighted paragraph
+    return (
+      <div className={`${bgColor} ${borderColor} mb-6 p-4 border-l-4 rounded-lg`}>
+        <h3 className={`text-2xl font-bold ${textColor} mb-3`}>{sectionName}</h3>
+
+        {/* Render points as a list */}
+        <ul className="list-disc pl-6 space-y-2 text-gray-800">
+          {sectionContentWithoutSummary
+            .split("\n")
+            .filter(line => line.trim() !== "")  // Remove empty lines
+            .map((line, index) => (
+              <li key={index}>{line.trim()}</li>
+            ))}
+        </ul>
+
+        {/* Render summary as a separate highlighted paragraph */}
+        {summaryText && (
+          <p className="mt-4 p-2 bg-yellow-50 rounded-lg font-semibold text-indigo-700">
+            <strong>Summary:</strong> {summaryText}
+          </p>
+        )}
+      </div>
+    );
+  };
+
+  // Render the overall summary section
+  const renderOverallSummary = () => {
+    const overallSummary = data.summary.match(/(\*\*Overall Summary:\*\*)([\s\S]*?)(?=\*\*|$)/i);
+    if (overallSummary) {
+      let overallSummaryContent = overallSummary[2].trim();
+      overallSummaryContent = cleanAsterisks(overallSummaryContent); // Clean asterisks
+
+      return (
+        <div className="bg-blue-50 border-blue-500 mb-6 p-4 border-l-4 rounded-lg">
+          <h3 className="text-2xl font-bold text-blue-600 mb-3">Overall Summary</h3>
+          <p className="text-gray-800">{overallSummaryContent}</p>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-        YouTube Analytics for <span className="font-bold text-gray-600">"{videoUrl}"</span>
+        YouTube Analytics for <span className="font-bold text-gray-600">"{keyword}"</span>
       </h2>
 
+      {/* Render the Overall Summary */}
+      {renderOverallSummary()}
+
       <div className="comment-section mb-8">
-        {/* Positive Comments Section */}
-        <div className="positive-comments mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
-          <h3 className="text-2xl font-bold text-green-600 mb-3">
-            Positive Comments: {data.positive}
-          </h3>
-          <p className="text-lg font-semibold">Key themes or common points:</p>
-          <ul className="list-disc pl-6 space-y-2">
-          {renderListItems(cleanSummary(extractSummarySection("Positive Comments")))}
-          </ul>
-        </div>
+        {/* Render Positive Comments with Green Color Scheme */}
+        {renderSection("Positive Comments", "bg-green-50", "border-green-500", "text-green-600")}
 
         <hr className="my-6 border-t border-gray-300" />
 
-        {/* Negative Comments Section */}
-        <div className="negative-comments mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
-          <h3 className="text-2xl font-bold text-red-600 mb-3">
-            Negative Comments: {data.negative}
-          </h3>
-          <p className="text-lg font-semibold">Key criticisms or issues:</p>
-          <ul className="list-disc pl-6 space-y-2">
-            {renderListItems(cleanSummary(extractSummarySection("Negative Comments"), "Key criticisms:"))}
-          </ul>
-        </div>
+        {/* Render Negative Comments with Red Color Scheme */}
+        {renderSection("Negative Comments", "bg-red-50", "border-red-500", "text-red-600")}
 
         <hr className="my-6 border-t border-gray-300" />
 
-        {/* Neutral Comments Section */}
-        <div className="neutral-comments mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
-          <h3 className="text-2xl font-bold text-yellow-600 mb-3">
-            Neutral Comments: {data.neutral}
-          </h3>
-          <p className="text-lg font-semibold">Key observations or comments:</p>
-          <ul className="list-disc pl-6 space-y-2">
-            {renderListItems(cleanSummary(extractSummarySection("Neutral Observations"), "Key observations:"))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Overall Summary */}
-      <div className="overall-summary p-4 bg-gray-50 border-l-4 border-gray-300 rounded-lg">
-          <p className="text-lg font-semibold">Overall Summary:</p>
-          <ul className="list-disc pl-6 space-y-2">
-            {renderListItems(cleanSummary(extractSummarySection("Neutral Observations"), "Key observations:"))}
-          </ul>
+        {/* Render Neutral Comments with Yellow Color Scheme */}
+        {renderSection("Neutral Comments", "bg-yellow-50", "border-yellow-500", "text-yellow-600")}
       </div>
     </div>
   );
