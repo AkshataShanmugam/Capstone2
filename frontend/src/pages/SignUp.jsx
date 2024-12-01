@@ -80,7 +80,7 @@ const SignUp = () => {
 
             if (response.ok) {
                 console.log('Signup successful:', data);
-                //alert('Signup successful! Redirecting to the home...');
+                //alert('Signup successful! Redirecting to the signin page...');
                 navigate('/signin'); 
             } else {
                 console.error('Signup failed:', data.message);

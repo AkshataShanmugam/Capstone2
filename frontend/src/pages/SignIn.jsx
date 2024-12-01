@@ -82,8 +82,8 @@ const SignIn = () => {
         alert('Signin success');
 
         setTimeout(() => {
-          navigate('/'); // Redirects to the home page
-        }, 3000);
+          navigate('/'); // to home page
+        }, 300);
       } else {
         console.error(data.message);
         alert(`Signin failed: ${data.message}`);
