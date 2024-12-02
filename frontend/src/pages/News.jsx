@@ -164,6 +164,8 @@ const News = () => {
                 <button
                   onClick={handleSummarize}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all ease-in-out duration-300"
+                  id="summarizeButton" 
+                  data-test="summarize-button"
                   disabled={isSummarizing} // Disable button when summarizing is in progress
                 >
                   {showSummarizedContent ? "Back to Articles" : "Summarize"}
@@ -174,24 +176,24 @@ const News = () => {
             {/* Hide Search Input and Button when Summarizing */}
             {!isSummarizing && !showSummarizedContent && (
               <div className="flex flex-col justify-center items-center h-full mt-8">
-                <form 
-                  onSubmit={(e) => { handleSubmit(e); }} 
-                  className="w-full max-w-md mx-auto transition-all duration-500 ease-in-out"
+              <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto transition-all duration-500 ease-in-out">
+                <input
+                  type="text"
+                  placeholder="Enter a keyword"
+                  value={keyword} // This ensures that the input field reflects the state
+                  onChange={handleKeywordChange}
+                  name="movieNews"
+                  id="movieNews"
+                  className="p-3 border border-gray-300 rounded-lg w-full mb-4 text-lg"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 text-white p-3 rounded-lg"
                 >
-                  <input
-                    type="text"
-                    placeholder="Enter a keyword"
-                    value={keyword}
-                    onChange={handleKeywordChange}
-                    className="p-3 border border-gray-300 rounded-lg w-full mb-4 text-lg"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-indigo-600 text-white p-3 rounded-lg"
-                  >
-                    Search
-                  </button>
-                </form>
+                  Search
+                </button>
+              </form>
+
               </div>
             )}
           </header>
@@ -209,7 +211,7 @@ const News = () => {
 
           {/* Show Summarized Content */}
           {showSummarizedContent && !isSummarizing && summarizedData && (
-            <section className="mt-12">
+            <section className="mt-12 summarized-content-class">
               <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Summarized Content</h2>
 
               <div className="bg-white p-4 rounded-lg shadow-md">
@@ -230,7 +232,7 @@ const News = () => {
                       className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition cursor-pointer hover:text-indigo-600 hover:border-indigo-600 border-b border-gray-200 relative" 
                     >
                       <div onClick={() => window.open(article.link, "_blank")}>
-                        <h3 className="text-xl font-medium text-gray-700 mb-2">{article.title}</h3>
+                        <h3 className="news-title text-xl font-medium text-gray-700 mb-2">{article.title}</h3>
                         <p className="text-sm text-gray-500 mb-2">Published on: {article.date}</p>
                         {article.thumbnail && (
                           <img src={article.thumbnail} alt="Article Thumbnail" className="w-full h-32 object-cover rounded-lg mb-4" />
@@ -267,7 +269,7 @@ const News = () => {
           )}
 
           {/* Display Error Message */}
-          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+          {error && <p className="text-red-500 text-center mt-4" id="errorMessage" data-test="error-message">{error}</p>}
         </div>
 
         {/* Sidebar for Latest Articles */}
