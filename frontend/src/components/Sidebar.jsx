@@ -45,6 +45,11 @@ const Sidebar = () => {
     setSelectedItem(index); // Set the clicked item as selected
   };
 
+  const handleSettings = () => {
+    navigate('/signin');
+    toggleModal();
+  };
+
   // Create a separate handleClick function for both icon and text click
   const handleClick = (index, path) => {
     handleItemClick(index); // Handle item click (selection)
@@ -116,18 +121,9 @@ const Sidebar = () => {
       {isModalOpen && (
         <div className="modal">
           <div className="switch">
-            <span className="text-gray-200 mr-2">Enable Dark Mode</span>
-            <label>
-              <input
-                type="checkbox"
-                className="sr-only"
-                checked={darkMode}
-                onChange={toggleDarkMode}
-              />
-              <div className="toggle">
-                <div className={`dot ${darkMode ? 'active' : ''}`}></div>
-              </div>
-            </label>
+            <span className="text-gray-200 mr-2" onClick={handleSettings}>
+              User Settings
+            </span>
           </div>
         </div>
       )}
