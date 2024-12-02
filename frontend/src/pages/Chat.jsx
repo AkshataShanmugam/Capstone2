@@ -118,7 +118,6 @@ const Chat = () => {
       setMessages(JSON.parse(savedHistory));
     }
   }, []);  
-  
 
   // Scroll to bottom effect (unchanged)
   useEffect(() => {
@@ -134,6 +133,7 @@ const Chat = () => {
           <h2 className="text-2xl font-bold">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-pink-400 to-purple-400">
               Hello, {username}!
+              {/* ChatBot */}
             </span>
           </h2>
         )}
@@ -150,7 +150,7 @@ const Chat = () => {
           >
             <div
               className={`max-w-[80%] p-3 rounded-lg break-words ${
-                message.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-[#bc69bc] text-white'
+                message.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-[#bc69bc] text-white bot-message' // Add 'bot-message' here
               }`}
             >
               {message.text}

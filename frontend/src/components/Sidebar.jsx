@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { HomeIcon, FilmIcon, DocumentTextIcon, VideoCameraIcon, TvIcon, CogIcon, Bars3Icon } from '@heroicons/react/24/solid';
-import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
-import '../styles/Sidebar.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import {
+  HomeIcon,
+  FilmIcon,
+  DocumentTextIcon,
+  VideoCameraIcon,
+  TvIcon,
+  CogIcon,
+  Bars3Icon,
+} from "@heroicons/react/24/solid";
+import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
+import "../styles/Sidebar.css"; // Import the CSS file
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,15 +21,15 @@ const Sidebar = () => {
 
   const menuItems = [
     // { name: 'Home', icon: HomeIcon, path: '/' },
-    { name: 'News', icon: DocumentTextIcon, path: '/' },
-    { name: 'Analytics', icon: FilmIcon, path: '/SearchPage' },
-    { name: 'Favorites', icon: VideoCameraIcon, path: '/wishlist' },
-    { name: 'Chat', icon: TvIcon, path: '/chat' },
+    { name: "News", icon: DocumentTextIcon, path: "/" },
+    { name: "Analytics", icon: FilmIcon, path: "/SearchPage" },
+    { name: "Favorites", icon: VideoCameraIcon, path: "/wishlist" },
+    { name: "Chat", icon: TvIcon, path: "/chat" },
   ];
 
   // Load the selected item from localStorage when the component mounts
   useEffect(() => {
-    const storedSelectedItem = localStorage.getItem('selectedItem');
+    const storedSelectedItem = localStorage.getItem("selectedItem");
     if (storedSelectedItem !== null) {
       setSelectedItem(Number(storedSelectedItem)); // Set the selected item to the stored value
     } else {
@@ -32,7 +40,7 @@ const Sidebar = () => {
   // Save the selected item to localStorage whenever it changes
   useEffect(() => {
     if (selectedItem !== null) {
-      localStorage.setItem('selectedItem', selectedItem); // Save to localStorage
+      localStorage.setItem("selectedItem", selectedItem); // Save to localStorage
     }
   }, [selectedItem]);
 
@@ -46,7 +54,7 @@ const Sidebar = () => {
   };
 
   const handleSettings = () => {
-    navigate('/signin');
+    navigate("/signin");
     toggleModal();
   };
 
@@ -65,15 +73,20 @@ const Sidebar = () => {
         <Bars3Icon className="h-8 w-8" />
       </button>
 
-      <aside className={`sidebar ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <aside
+        className={`sidebar ${
+          isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+        }`}
+      >
         <nav className="sidebar-nav">
           {menuItems.map((item, index) => (
             <li
               key={index}
-              className={selectedItem === index ? 'selected' : ''} // Conditional selected class
+              className={selectedItem === index ? "selected" : ""} // Conditional selected class
+              data-testid={`menu-item-${item.name.toLowerCase()}`} // Add a unique test id
             >
               {/* Icon click handler */}
-              <div 
+              <div
                 className="icon-wrapper"
                 onClick={() => handleClick(index, item.path)} // Handle click for icon
               >
@@ -84,11 +97,13 @@ const Sidebar = () => {
               <div className="text-wrapper">
                 <Link
                   to={item.path} // Use Link for routing
-                  className={`link ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}
+                  className={`link ${
+                    isSidebarOpen ? "opacity-100" : "opacity-0"
+                  }`}
                   style={{
-                    visibility: isSidebarOpen ? 'visible' : 'hidden',
-                    width: isSidebarOpen ? 'auto' : '0',
-                    padding: isSidebarOpen ? '0.5rem' : '0', // Adjust the padding to make sure the link remains clickable
+                    visibility: isSidebarOpen ? "visible" : "hidden",
+                    width: isSidebarOpen ? "auto" : "0",
+                    padding: isSidebarOpen ? "0.5rem" : "0", // Adjust the padding to make sure the link remains clickable
                   }}
                   onClick={(e) => {
                     e.preventDefault(); // Prevent default Link behavior to use custom handler
@@ -108,11 +123,15 @@ const Sidebar = () => {
               toggleModal();
               toggleCogRotation(); // Rotate the cog on click
             }}
-            className={`settings-icon ${isCogRotated ? 'rotated' : ''}`} // Apply the rotated class conditionally
+            className={`settings-icon ${isCogRotated ? "rotated" : ""}`} // Apply the rotated class conditionally
           >
             <CogIcon className="h-8 w-8 text-[#858a8f]" />
           </button>
-          <div className={`cog-text ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
+          <div
+            className={`cog-text ${
+              isSidebarOpen ? "opacity-100" : "opacity-0"
+            }`}
+          >
             Settings
           </div>
         </div>
