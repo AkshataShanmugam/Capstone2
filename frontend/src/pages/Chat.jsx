@@ -104,7 +104,7 @@ const Chat = () => {
       setMessages((prev) => [...prev, botMessage]);
   
       // Optionally store conversation history in localStorage
-      localStorage.setItem("chatHistory", JSON.stringify([...messages, userMessage, botMessage]));
+      sessionStorage.setItem("chatHistory", JSON.stringify([...messages, userMessage, botMessage]));
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = { text: 'Sorry, I encountered an error.', sender: 'bot' };
@@ -113,7 +113,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    const savedHistory = localStorage.getItem("chatHistory");
+    const savedHistory = sessionStorage.getItem("chatHistory");
     if (savedHistory) {
       setMessages(JSON.parse(savedHistory));
     }

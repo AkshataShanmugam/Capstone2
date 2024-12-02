@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Analytics from "../components/Trends";
 import YouTubeAnalytics from "../components/YouTubeAnalytics";
 import "../styles/SearchPage.css";
@@ -10,6 +10,21 @@ const SearchPage = () => {
   const [keyword, setKeyword] = useState(""); // Search keyword state
   const [youtubeUrl, setYoutubeUrl] = useState(""); // YouTube URL state
   const [selectedOption, setSelectedOption] = useState("top_searches"); // Default to Top Searches
+  const [analyzeClicked, setAnalyzeClicked] = useState(false); // Track if Analyze button is clicked
+
+
+  useEffect(() => {
+    // Check if there's cached search data in sessionStorage and load it
+    const cachedData = sessionStorage.getItem("searchData");
+    const cachedDataKeyword = sessionStorage.getItem("searchDataKeyword");
+    if (cachedData) {
+      setSearchData(JSON.parse(cachedData)); // Parse and set the cached data
+    }
+
+    if (cachedDataKeyword){
+      setKeyword(JSON.parse(cachedDataKeyword));
+    }
+  }, []);
 
   const handleSearch = async () => {
     if (!keyword) {
@@ -29,6 +44,9 @@ const SearchPage = () => {
       }
       const data = await response.json();
       setSearchData(data);
+      sessionStorage.setItem("searchData", JSON.stringify(data)); // Store search data in sessionStorage
+      sessionStorage.setItem("searchDataKeyword", JSON.stringify(keyword)); // Store search data in sessionStorage
+    
     } catch (err) {
       setError(err.message || "An unexpected error occurred.");
     } finally {
@@ -47,6 +65,7 @@ const SearchPage = () => {
       return;
     }
     setError(null);
+    setAnalyzeClicked(true);
   };
 
   return (
@@ -199,7 +218,7 @@ const SearchPage = () => {
         )}
 
         {/* Conditionally Render YouTube Analytics Data */}
-        {selectedOption === "youtube_analytics" && youtubeUrl && isValidYouTubeUrl(youtubeUrl) && (
+        {selectedOption === "youtube_analytics" && analyzeClicked && youtubeUrl && isValidYouTubeUrl(youtubeUrl) && (
           <YouTubeAnalytics videoUrl={youtubeUrl} />
         )}
       </div>

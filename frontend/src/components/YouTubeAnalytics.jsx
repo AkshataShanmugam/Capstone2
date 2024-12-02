@@ -1,10 +1,26 @@
 import React, { useState, useEffect } from "react";
 
 const YouTubeData = ({ videoUrl }) => {
+  const [youtubeUrl, setYoutubeUrl] = useState(videoUrl); // YouTube URL state
   const [data, setData] = useState(null); // To store the fetched data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-console.log(videoUrl)
+  console.log(videoUrl);
+  
+  useEffect(() => {
+    // Check if there's cached search data in sessionStorage and load it
+    const cachedData = sessionStorage.getItem("youtubeData");
+    const cachedDataKeyword = sessionStorage.getItem("youtubeURL");
+    if (cachedData) {
+      setData(JSON.parse(cachedData)); // Parse and set the cached data
+      setLoading(false); 
+    }
+
+    if (cachedDataKeyword){
+      setYoutubeUrl(JSON.parse(cachedDataKeyword));
+    }
+  }, []);
+
   // Fetch the YouTube data on component mount
   useEffect(() => {
     const fetchYouTubeData = async () => {
@@ -14,7 +30,7 @@ console.log(videoUrl)
           method: "POST",
           headers: { "Content-Type": "application/json" },
           // body: JSON.stringify({ video_url: "https://www.youtube.com/watch?v=CljcOFN8EYA" }),
-          body: JSON.stringify({ video_url: videoUrl }),
+          body: JSON.stringify({ video_url: youtubeUrl }),
         });
 
         if (!response.ok) {
@@ -29,6 +45,8 @@ console.log(videoUrl)
         }
 
         setData(result);
+        sessionStorage.setItem("youtubeData", JSON.stringify(result)); // Store YouTube data in sessionStorage   
+        sessionStorage.setItem("youtubeURL", JSON.stringify(youtubeUrl)); // Store YouTube URL in sessionStorage     
       } catch (err) {
         setError(err.message || "Error fetching YouTube analytics data.");
       } finally {
@@ -125,7 +143,7 @@ console.log(videoUrl)
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-        YouTube Analytics for <span className="font-bold text-gray-600">"{videoUrl}"</span>
+        YouTube Analytics for <span className="font-bold text-gray-600">"{youtubeUrl}"</span>
       </h2>
 
       {/* Render the Overall Summary */}

@@ -14,6 +14,23 @@ const News = () => {
   const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
+    // Load data from sessionStorage when the component mounts
+    const storedData = sessionStorage.getItem('newsData');
+    const storedKeyword = sessionStorage.getItem('keyword');
+    const storedSummarizedData = sessionStorage.getItem('newsSummarized');
+
+    if (storedData) {
+      setData(JSON.parse(storedData));
+    }
+    if (storedKeyword) {
+      setKeyword(JSON.parse(storedKeyword));
+    }
+    if (storedSummarizedData) {
+      setSummarizedData(JSON.parse(storedSummarizedData));
+    }
+  }, []); 
+
+  useEffect(() => {
     const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
     setWishlist(storedWishlist);
   }, []);
@@ -46,6 +63,9 @@ const News = () => {
       setData(jsonData);
       setOriginalData(jsonData);
       setSummarizedData(jsonData.summarized_news);
+      sessionStorage.setItem('newsData', JSON.stringify(jsonData)); // Replace the old data with new results
+      sessionStorage.setItem('newsSummarized', JSON.stringify(jsonData.summarized_news)); // Replace the old data with new results
+      sessionStorage.setItem('keyword', JSON.stringify(keyword)); // Replace the old data with new results
     } catch (err) {
       setError(`Error loading data: ${err.message}`);
     } finally {
