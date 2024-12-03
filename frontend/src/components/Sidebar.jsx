@@ -9,6 +9,7 @@ import {
   Bars3Icon,
 } from "@heroicons/react/24/solid";
 import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
+import { LineChart } from "lucide-react"
 import "../styles/Sidebar.css"; // Import the CSS file
 
 const Sidebar = () => {
@@ -22,7 +23,7 @@ const Sidebar = () => {
   const menuItems = [
     // { name: 'Home', icon: HomeIcon, path: '/' },
     { name: "News", icon: DocumentTextIcon, path: "/" },
-    { name: "Analytics", icon: FilmIcon, path: "/SearchPage" },
+    { name: "Analytics", icon: LineChart, path: "/SearchPage" },
     { name: "Favorites", icon: VideoCameraIcon, path: "/wishlist" },
     { name: "Chat", icon: TvIcon, path: "/chat" },
   ];
