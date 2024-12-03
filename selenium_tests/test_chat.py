@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from base_test import BaseTest
 
-class NewsTest(BaseTest):
+class ChatTest(BaseTest):
     def test_chat_functionality(self):
         sidebar_toggle_button = self.driver.find_element(By.CLASS_NAME, "h-8")
         sidebar_toggle_button.click()
