@@ -36,8 +36,8 @@ const SearchPage = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);
-      // const response = await fetch(`/results.json?keyword=${encodeURIComponent(keyword)}`);
+      // const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);
+      const response = await fetch(`/results.json`);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
@@ -103,6 +103,7 @@ const SearchPage = () => {
                 onChange={(e) => setKeyword(e.target.value)}
                 className="search-input"
                 placeholder="Search..."
+                id="trends-search-input"
               />
               <button onClick={handleSearch} className="search-button">
                 Search
@@ -119,6 +120,7 @@ const SearchPage = () => {
                 onChange={(e) => setYoutubeUrl(e.target.value)}
                 className="search-input"
                 placeholder="Enter YouTube Video URL..."
+                id="youtube-search-input"
               />
               <button onClick={handleYouTubeSubmit} className="search-button">
                 Analyze
