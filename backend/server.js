@@ -5,6 +5,8 @@ const cors = require('cors'); // Import CORS
 const scriptRoutes = require('./routes/movieRoutes');
 const authRoutes = require('./routes/auth');
 const cookieParser = require('cookie-parser');
+const wishlistRoutes = require('./routes/wishlist');
+
 require('dotenv').config();
 
 console.log(process.env); 
@@ -24,6 +26,7 @@ mongoose.connect(process.env.MONGO_URI) // Connect to MongoDB
 
 app.use('/api/scripts', scriptRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/wishlist', wishlistRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
