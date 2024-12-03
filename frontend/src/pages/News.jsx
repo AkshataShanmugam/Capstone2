@@ -53,8 +53,8 @@ const News = () => {
     setHasSummarized(false); // Reset summarization status when a new search is done
 
     try {
-      // const response = await fetch(`/results.json`);
-      const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);
+      const response = await fetch(`/results.json`);
+      // const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
       }
@@ -127,13 +127,41 @@ const News = () => {
     );
   };
 
-  const toggleWishlist = (article) => {
-    const updatedWishlist = wishlist.some(item => item.link === article.link)
-      ? wishlist.filter(item => item.link !== article.link)
-      : [...wishlist, article];
-    
-    setWishlist(updatedWishlist);
-    localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+  const toggleWishlist = async (article) => {
+    const isInWishlist = wishlist.some(item => item.link === article.link);
+
+    // Create the payload for adding/removing from wishlist
+    const payload = {
+      title: article.title,
+      link: article.link,
+      date: article.date,
+      thumbnail: article.thumbnail
+    };
+
+    try {
+      const url = isInWishlist
+        ? 'http://127.0.0.1:5000/api/wishlist/remove'
+        : 'http://127.0.0.1:5000/api/wishlist/add';
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(isInWishlist ? { link: article.link } : payload)
+      });
+
+      if (response.ok) {
+        const updatedWishlist = isInWishlist
+          ? wishlist.filter(item => item.link !== article.link)
+          : [...wishlist, article];
+
+        setWishlist(updatedWishlist);
+        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+      } else {
+        throw new Error('Failed to update wishlist.');
+      }
+    } catch (err) {
+      setError(`Error updating wishlist: ${err.message}`);
+    }
   };
 
   // Skeleton loader for individual cards
