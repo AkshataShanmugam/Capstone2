@@ -36,8 +36,8 @@ const SearchPage = () => {
     setError(null);
 
     try {
-      // const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);
-      const response = await fetch(`/results.json`);
+      const response = await fetch(`http://localhost:8000/google/fetch_data?keyword=${encodeURIComponent(keyword)}`);
+      // const response = await fetch(`/results.json`);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch data. Status: ${response.status}`);
@@ -81,13 +81,13 @@ const SearchPage = () => {
               Top Searches
             </button>
             <button
-              className={`option-button ${selectedOption === "google_trends" ? "selected" : ""}`}
+              className={`google_trends_graph option-button ${selectedOption === "google_trends" ? "selected" : ""}`}
               onClick={() => setSelectedOption("google_trends")}
             >
               Google Trends
             </button>
             <button
-              className={`option-button ${selectedOption === "youtube_analytics" ? "selected" : ""}`}
+              className={`youtube_data option-button ${selectedOption === "youtube_analytics" ? "selected" : ""}`}
               onClick={() => setSelectedOption("youtube_analytics")}
             >
               YouTube Analytics

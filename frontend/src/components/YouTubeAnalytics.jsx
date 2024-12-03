@@ -25,8 +25,8 @@ const YouTubeData = ({ videoUrl }) => {
   useEffect(() => {
     const fetchYouTubeData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/youtube/analyze-sentiment/`, {
-        // const response = await fetch("/youtube_results.json", {
+        // const response = await fetch(`http://localhost:8000/youtube/analyze-sentiment/`, {
+        const response = await fetch("/youtube_results.json", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           // body: JSON.stringify({ video_url: "https://www.youtube.com/watch?v=CljcOFN8EYA" }),
