@@ -59,7 +59,8 @@ const SignUp = () => {
     // Handle form submission (username/email/password sign-up)
     const handleFormSubmit = async (event) => {
         event.preventDefault();
-        const form = event.target;
+        // const form = event.target;
+        const form = event.currentTarget;
         const username = form.username.value;
         const email = form.email.value;
         const password = form.password.value;
