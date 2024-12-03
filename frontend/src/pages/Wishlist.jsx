@@ -106,7 +106,7 @@ const Wishlist = () => {
                 </div>
                 <button
                   onClick={() => removeFromWishlist(article.link)}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-white shadow-md hover:bg-red-50 transition-colors duration-300"
+                  className="Remove absolute top-4 right-4 p-2 rounded-full bg-white shadow-md hover:bg-red-50 transition-colors duration-300"
                   aria-label="Remove from wishlist"
                 >
                   <Trash2 className="w-5 h-5 text-red-500" />
