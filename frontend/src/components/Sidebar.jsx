@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-  HomeIcon,
-  FilmIcon,
   DocumentTextIcon,
-  VideoCameraIcon,
-  TvIcon,
+  BookmarkIcon,
+  ChatBubbleLeftIcon,
   CogIcon,
   Bars3Icon,
 } from "@heroicons/react/24/solid";
@@ -16,16 +14,14 @@ const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null); // Initially set to null
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [isCogRotated, setIsCogRotated] = useState(false); // New state to track rotation
   const navigate = useNavigate(); // hook to navigate in react-router
 
   const menuItems = [
     // { name: 'Home', icon: HomeIcon, path: '/' },
     { name: "News", icon: DocumentTextIcon, path: "/" },
     { name: "Analytics", icon: LineChart, path: "/SearchPage" },
-    { name: "Favorites", icon: VideoCameraIcon, path: "/wishlist" },
-    { name: "Chat", icon: TvIcon, path: "/chat" },
+    { name: "Favorites", icon: BookmarkIcon, path: "/wishlist" },
+    { name: "Chat", icon: ChatBubbleLeftIcon, path: "/chat" },
   ];
 
   // Load the selected item from localStorage when the component mounts
@@ -46,9 +42,7 @@ const Sidebar = () => {
   }, [selectedItem]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const toggleDarkMode = () => setDarkMode(!darkMode);
   const toggleModal = () => setIsModalOpen(!isModalOpen);
-  const toggleCogRotation = () => setIsCogRotated(!isCogRotated); // Toggle cog rotation
 
   const handleItemClick = (index) => {
     setSelectedItem(index); // Set the clicked item as selected
@@ -122,9 +116,7 @@ const Sidebar = () => {
           <button
             onClick={() => {
               toggleModal();
-              toggleCogRotation(); // Rotate the cog on click
             }}
-            className={`settings-icon ${isCogRotated ? "rotated" : ""}`} // Apply the rotated class conditionally
           >
             <CogIcon className="h-8 w-8 text-[#858a8f]" />
           </button>
