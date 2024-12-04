@@ -3,47 +3,45 @@ version: "3.8"
 services:
   frontend:
     build:
-      context: ./frontend  # Path to your frontend directory
+      context: ./frontend
     container_name: frontend-app
     ports:
-      - "5173:5173"  # Vite dev server runs on port 5173
+      - "5173:5173"
     env_file:
       - ./frontend/.env
-    command: npm run dev -- --host 0.0.0.0  # Expose Vite on all network interfaces
+    command: npm run dev -- --host 0.0.0.0
     networks:
       - app-network
 
   app:
     build:
-      context: ./model  # Path to your model directory (FastAPI)
+      context: ./model
     container_name: fastapi_app
     ports:
-      - "8000:8000"  # FastAPI server runs on port 8000
+      - "8000:8000"
     env_file:
       - ./model/.env
     networks:
       - app-network
 
-  # MongoDB service
   mongo:
     image: mongo:latest
     container_name: mongo
     ports:
-      - "27017:27017"  # MongoDB port
+      - "27017:27017"
     networks:
       - app-network
 
-  # Node.js service (in backend directory)
   node-app:
     build:
-      context: ./backend  # Path to your Node.js and MongoDB code
+      context: ./backend
     container_name: node-app
     env_file:
-      - ./backend/.env  # Environment variables for Node.js
+      - ./backend/.env
     ports:
-      - "5000:5000"  # Node.js app runs on port 5000
+      - "5000:5000"
     depends_on:
-      - mongo  # Ensures MongoDB starts before Node.js
+      - mongo
     networks:
       - app-network
 
