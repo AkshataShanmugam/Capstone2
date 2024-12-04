@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // Assuming you're using React Router
 
 const News = () => {
   const [data, setData] = useState(null);
@@ -12,6 +13,7 @@ const News = () => {
   const [hasSummarized, setHasSummarized] = useState(false);
   const [summarizedData, setSummarizedData] = useState(null);
   const [wishlist, setWishlist] = useState([]);
+  const navigate = useNavigate(); // For navigation to the sign-in page
 
   useEffect(() => {
     // Load data from sessionStorage when the component mounts
@@ -63,9 +65,9 @@ const News = () => {
       setData(jsonData);
       setOriginalData(jsonData);
       setSummarizedData(jsonData.summarized_news);
-      sessionStorage.setItem('newsData', JSON.stringify(jsonData)); // Replace the old data with new results
-      sessionStorage.setItem('newsSummarized', JSON.stringify(jsonData.summarized_news)); // Replace the old data with new results
-      sessionStorage.setItem('keyword', JSON.stringify(keyword)); // Replace the old data with new results
+      sessionStorage.setItem('newsData', JSON.stringify(jsonData)); 
+      sessionStorage.setItem('newsSummarized', JSON.stringify(jsonData.summarized_news)); 
+      sessionStorage.setItem('keyword', JSON.stringify(keyword)); 
     } catch (err) {
       setError(`Error loading data: ${err.message}`);
     } finally {
@@ -127,7 +129,19 @@ const News = () => {
     );
   };
 
+  // Check if user is signed in
+  const isUserSignedIn = () => {
+    return localStorage.getItem('authToken'); // or your preferred authentication check
+  };
+
   const toggleWishlist = async (article) => {
+    if (!isUserSignedIn()) {
+      // User is not signed in, redirect to the sign-in page
+      alert("You must be signed in to add articles to your wishlist.");
+      navigate('/signin'); // Assuming '/signin' is the route to your sign-in page
+      return;
+    }
+
     const isInWishlist = wishlist.some(item => item.link === article.link);
 
     // Create the payload for adding/removing from wishlist
@@ -204,24 +218,23 @@ const News = () => {
             {/* Hide Search Input and Button when Summarizing */}
             {!isSummarizing && !showSummarizedContent && (
               <div className="flex flex-col justify-center items-center h-full mt-8">
-              <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto transition-all duration-500 ease-in-out">
-                <input
-                  type="text"
-                  placeholder="Enter a keyword"
-                  value={keyword} // This ensures that the input field reflects the state
-                  onChange={handleKeywordChange}
-                  name="movieNews"
-                  id="movieNews"
-                  className="p-3 border border-gray-300 rounded-lg w-full mb-4 text-lg"
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-indigo-600 text-white p-3 rounded-lg"
-                >
-                  Search
-                </button>
-              </form>
-
+                <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto transition-all duration-500 ease-in-out">
+                  <input
+                    type="text"
+                    placeholder="Enter a keyword"
+                    value={keyword} 
+                    onChange={handleKeywordChange}
+                    name="movieNews"
+                    id="movieNews"
+                    className="p-3 border border-gray-300 rounded-lg w-full mb-4 text-lg"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-indigo-600 text-white p-3 rounded-lg"
+                  >
+                    Search
+                  </button>
+                </form>
               </div>
             )}
           </header>
@@ -289,18 +302,15 @@ const News = () => {
             </section>
           )}
 
-          {/* Show skeleton loader when loading */}
           {loading && !data && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, index) => renderCardSkeleton(index))}
             </div>
           )}
 
-          {/* Display Error Message */}
           {error && <p className="text-red-500 text-center mt-4" id="errorMessage" data-test="error-message">{error}</p>}
         </div>
 
-        {/* Sidebar for Latest Articles */}
         {!showSummarizedContent && (
           <div className="w-1/4 bg-gray-50 p-6 rounded-lg shadow-lg sticky top-0">
             <h3 className="text-2xl font-semibold text-gray-800 mb-4">Latest Articles</h3>
