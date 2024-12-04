@@ -33,8 +33,31 @@ const News = () => {
   }, []); 
 
   useEffect(() => {
-    const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    setWishlist(storedWishlist);
+    // Fetch wishlist only for signed-in users
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+      // Make an API request to get the wishlist for the signed-in user
+      const fetchWishlist = async () => {
+        try {
+          const response = await fetch('/api/wishlist', {
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch wishlist');
+          }
+
+          const userWishlist = await response.json();
+          setWishlist(userWishlist);
+        } catch (error) {
+          console.error('Error fetching wishlist:', error);
+        }
+      };
+
+      fetchWishlist();
+    }
   }, []);
 
   const handleKeywordChange = (e) => {
@@ -142,6 +165,7 @@ const News = () => {
       return;
     }
 
+    const authToken = localStorage.getItem('authToken');
     const isInWishlist = wishlist.some(item => item.link === article.link);
 
     // Create the payload for adding/removing from wishlist
@@ -159,7 +183,10 @@ const News = () => {
 
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}` // Include the token for authentication
+        },
         body: JSON.stringify(isInWishlist ? { link: article.link } : payload)
       });
 
