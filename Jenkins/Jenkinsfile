@@ -1,38 +1,34 @@
 pipeline {
     agent any
 
-    environment {
-        BAT_FILE = "Jenkins/example.bat" 
+    environment { 
         RECIPIENT = "mincelichan@gmail.com" 
     }
 
     stages {
-        stage('Run Tests') {
-            parallel {
-                stage('Backend Tests') {
-                    steps {
-                        script {
-                            dir('backend') {
-                                bat """
-                                echo Running backend tests...
-                                npm install
-                                npm run test
-                                """
-                            }
-                        }
+        stage('Run Backend Tests') {
+            steps {
+                script {
+                    dir('backend') {
+                        bat """
+                        echo Running backend tests...
+                        npm install --verbose
+                        npm run test
+                        """
                     }
                 }
-                stage('Frontend Tests') {
-                    steps {
-                        script {
-                            dir('frontend') {
-                                bat """
-                                echo Running frontend tests...
-                                npm install
-                                npm run test
-                                """
-                            }
-                        }
+            }
+        }
+
+        stage('Run Frontend Tests') {
+            steps {
+                script {
+                    dir('frontend') {
+                        bat """
+                        echo Running frontend tests...
+                        npm install --verbose
+                        npm run test
+                        """
                     }
                 }
             }
@@ -115,89 +111,3 @@ pipeline {
         }
     }
 }
-
-// pipeline {
-//     agent any
-
-//     environment {
-//         BAT_FILE = "Jenkins/example.bat" 
-//         RECIPIENT = "mincelichan@gmail.com" 
-//     }
-
-//     stages {
-//         stage('Run Docker Containers in Parallel - Backend') {
-//             steps {
-//                 script {
-//                     try {
-//                         // Running both tasks in parallel: Model and Backend
-//                         parallel (
-//                             "Run Model Container": {
-//                                 dir('model') {
-//                                     bat """
-//                                     docker-compose down
-//                                     echo SERP_API_KEY=14353d91c97894557ba0b7395af7246de0222bd4c28f751c46e48ac03071fcf0npm > .env
-//                                     echo GROQ_API_KEY=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 >> .env
-//                                     echo YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA >> .env
-//                                     echo HUGGINGFACE_API_KEY=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 >> .env
-//                                     docker-compose up -d --build
-//                                     """
-//                                 }
-//                             },
-//                             "Run Backend Container": {
-//                                 dir('backend') {
-//                                     bat """
-//                                     docker-compose down
-//                                     echo MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true^&w=majority > .env
-//                                     echo PORT=5000 >> .env
-//                                     echo JWT_SECRET='BuddyBrownie' >> .env
-//                                     docker-compose up -d --build
-//                                     """
-//                                 }
-//                             }
-//                         )
-//                     } catch (Exception e) {
-//                         currentBuild.result = 'FAILURE'
-//                         throw e
-//                     }
-//                 }
-//             }
-//         }
-
-//         stage('Configure Frontend and Run') {
-//             steps {
-//                 script {
-//                     dir('frontend') {
-//                         bat """
-//                         docker-compose down
-//                         echo VITE_GOOGLE_CLIENT_ID=381230721825-bgkpl6in88b5o05hhi537qp4vf9bgqo1.apps.googleusercontent.com > .env
-//                         docker-compose up --build
-//                         """
-//                     }
-//                 }
-//             }
-//         }
-//     }
-
-//     post {
-//         success {
-//             echo "Build succeeded, sending email..."
-//             emailext (
-//                 subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-//                 body: """<p>The build was successful.</p>
-//                          <p>Job: ${env.JOB_NAME}</p>
-//                          <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>""",
-//                 to: "${RECIPIENT}"
-//             )
-//         }
-//         failure {
-//             echo "Build failed, sending email..."
-//             emailext (
-//                 subject: "Jenkins Build FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-//                 body: """<p>The build failed.</p>
-//                          <p>Job: ${env.JOB_NAME}</p>
-//                          <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>""",
-//                 to: "${RECIPIENT}"
-//             )
-//         }
-//     }
-// }
