@@ -15,7 +15,7 @@ class YoutubeDataTest(BaseTest):
         time.sleep(2)
         sidebar_toggle_button.click()
     
-        youtube_data_button = self.driver.find_element(By.CLASS_NAME, "youtube_data")  # Button to navigate to Google Trends
+        youtube_data_button = self.driver.find_element(By.CLASS_NAME, "youtube_data")  
         youtube_data_button.click()
         time.sleep(2)
 
@@ -34,7 +34,7 @@ class YoutubeDataTest(BaseTest):
         time.sleep(2)
         sidebar_toggle_button.click()
     
-        youtube_data_button = self.driver.find_element(By.CLASS_NAME, "youtube_data")  # Button to navigate to Google Trends
+        youtube_data_button = self.driver.find_element(By.CLASS_NAME, "youtube_data")  
         youtube_data_button.click()
         time.sleep(2)
 
@@ -49,8 +49,7 @@ class YoutubeDataTest(BaseTest):
         search_button = self.driver.find_element(By.CSS_SELECTOR, ".search-button")
         search_button.click()
         time.sleep(2)
-
-        # Verify that the summary sections are displayed correctly
+        
         try:
             overall_summary_section = WebDriverWait(self.driver, 400).until(
                 EC.visibility_of_element_located((By.XPATH, "//h3[contains(text(), 'Overall Summary')]"))
