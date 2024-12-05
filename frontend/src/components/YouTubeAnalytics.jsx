@@ -7,19 +7,19 @@ const YouTubeData = ({ videoUrl }) => {
   const [error, setError] = useState(null);
   console.log(videoUrl);
   
-  useEffect(() => {
-    // Check if there's cached search data in sessionStorage and load it
-    const cachedData = sessionStorage.getItem("youtubeData");
-    const cachedDataKeyword = sessionStorage.getItem("youtubeURL");
-    if (cachedData) {
-      setData(JSON.parse(cachedData)); // Parse and set the cached data
-      setLoading(false); 
-    }
+  // useEffect(() => {
+  //   // Check if there's cached search data in sessionStorage and load it
+  //   const cachedData = sessionStorage.getItem("youtubeData");
+  //   const cachedDataKeyword = sessionStorage.getItem("youtubeURL");
+  //   if (cachedData) {
+  //     setData(JSON.parse(cachedData)); // Parse and set the cached data
+  //     setLoading(false); 
+  //   }
 
-    if (cachedDataKeyword){
-      setYoutubeUrl(JSON.parse(cachedDataKeyword));
-    }
-  }, []);
+  //   if (cachedDataKeyword){
+  //     setYoutubeUrl(JSON.parse(cachedDataKeyword));
+  //   }
+  // }, []);
 
   // Fetch the YouTube data on component mount
   useEffect(() => {
