@@ -14,7 +14,7 @@ pipeline {
                         bat """
                         echo Running backend tests...
                         npm install --verbose
-                        npm run test
+                        npm run test || exit /b 1
                         """
                     }
                 }
@@ -28,7 +28,7 @@ pipeline {
                         bat """
                         echo Running frontend tests...
                         npm install --verbose
-                        npm run test
+                        npm run test || exit /b 1
                         """
                     }
                 }
