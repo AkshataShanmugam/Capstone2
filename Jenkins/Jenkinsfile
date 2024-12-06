@@ -14,8 +14,7 @@ pipeline {
                         dir('backend') {
                             bat """
                             echo Running backend tests...
-                            npm install --verbose || exit /b 1
-                            npm run test -- --watchAll=false || exit /b 1
+                            npm install && npm run test
                             """
                         }
                     } catch (Exception e) {
@@ -33,8 +32,7 @@ pipeline {
                         dir('frontend') {
                             bat """
                             echo Running frontend tests...
-                            npm install 
-                            npm run test
+                            npm install && npm run test
                             """
                         }
                     } catch (Exception e) {
