@@ -10,12 +10,17 @@ pipeline {
         stage('Run Backend Tests') {
             steps {
                 script {
-                    dir('backend') {
-                        bat """
-                        echo Running backend tests...
-                        npm install --verbose
-                        npm run test || exit /b 1
-                        """
+                    try {
+                        dir('backend') {
+                            bat """
+                            echo Running backend tests...
+                            npm install --verbose || exit /b 1
+                            npm run test -- --watchAll=false || exit /b 1
+                            """
+                        }
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        error("Backend tests failed. Exiting pipeline.")
                     }
                 }
             }
@@ -24,12 +29,17 @@ pipeline {
         stage('Run Frontend Tests') {
             steps {
                 script {
-                    dir('frontend') {
-                        bat """
-                        echo Running frontend tests...
-                        npm install --verbose
-                        npm run test || exit /b 1
-                        """
+                    try {
+                        dir('frontend') {
+                            bat """
+                            echo Running frontend tests...
+                            npm install --verbose || exit /b 1
+                            npm run test -- --watchAll=false || exit /b 1
+                            """
+                        }
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        error("Frontend tests failed. Exiting pipeline.")
                     }
                 }
             }
