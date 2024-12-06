@@ -98,27 +98,27 @@ pipeline {
         // }
     // }
 
-    post {
-        success {
-            echo "Build succeeded, sending email..."
-            emailext (
-                subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """<p>The build was successful.</p>
-                         <p>Job: ${env.JOB_NAME}</p>
-                         <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>""",
-                to: "${RECIPIENT}"
-            )
-        }
-        failure {
-            echo "Build failed, sending email..."
-            emailext (
-                subject: "Jenkins Build FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """<p>The build failed.</p>
-                         <p>Job: ${env.JOB_NAME}</p>
-                         <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>
-                         <p>Reason: Test cases failed or other issues.</p>""",
-                to: "${RECIPIENT}"
-            )
-        }
+    // post {
+    //     success {
+    //         echo "Build succeeded, sending email..."
+    //         emailext (
+    //             subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+    //             body: """<p>The build was successful.</p>
+    //                      <p>Job: ${env.JOB_NAME}</p>
+    //                      <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>""",
+    //             to: "${RECIPIENT}"
+    //         )
+    //     }
+    //     failure {
+    //         echo "Build failed, sending email..."
+    //         emailext (
+    //             subject: "Jenkins Build FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+    //             body: """<p>The build failed.</p>
+    //                      <p>Job: ${env.JOB_NAME}</p>
+    //                      <p>Build: <a href='${env.BUILD_URL}'>${env.BUILD_NUMBER}</a></p>
+    //                      <p>Reason: Test cases failed or other issues.</p>""",
+    //             to: "${RECIPIENT}"
+    //         )
+    //     }
     }
 }
