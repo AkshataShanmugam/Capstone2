@@ -45,7 +45,7 @@ pipeline {
                                 dir('model') {
                                     bat """
                                     docker-compose down
-                                    echo SERP_API_KEY=14353d91c97894557ba0b7395af7246de0222bd4c28f751c46e48ac03071fcf0npm > .env
+                                    echo SERP_API_KEY=f9b77c862ea167d8effb2f7e93d918c28bdc3000fffdd50fd514fc7160c1a61a > .env
                                     echo GROQ_API_KEY=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 >> .env
                                     echo YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA >> .env
                                     echo HUGGINGFACE_API_KEY=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 >> .env
