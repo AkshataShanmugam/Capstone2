@@ -20,7 +20,7 @@ describe('Terms Component', () => {
   test('renders all sections of terms', () => {
     render(<Terms />);
     const sections = [
-      "1. Acceptance of Terms",
+      "1. Acceptance of Terms and conditions of the application",
       "2. Changes to Terms",
       "3. User Responsibilities",
       "4. Privacy",
