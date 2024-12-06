@@ -33,8 +33,8 @@ pipeline {
                         dir('frontend') {
                             bat """
                             echo Running frontend tests...
-                            npm install --verbose || exit /b 1
-                            npm run test -- --watchAll=false || exit /b 1
+                            npm install 
+                            npm run test
                             """
                         }
                     } catch (Exception e) {
@@ -45,58 +45,58 @@ pipeline {
             }
         }
 
-        stage('Run Docker Containers in Parallel - Backend') {
-            steps {
-                script {
-                    try {
-                        // Running both tasks in parallel: Model and Backend
-                        parallel (
-                            "Run Model Container": {
-                                dir('model') {
-                                    bat """
-                                    docker-compose down
-                                    echo SERP_API_KEY=f9b77c862ea167d8effb2f7e93d918c28bdc3000fffdd50fd514fc7160c1a61a > .env
-                                    echo GROQ_API_KEY=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 >> .env
-                                    echo YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA >> .env
-                                    echo HUGGINGFACE_API_KEY=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 >> .env
-                                    docker-compose up -d --build
-                                    """
-                                }
-                            },
-                            "Run Backend Container": {
-                                dir('backend') {
-                                    bat """
-                                    docker-compose down
-                                    echo MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true^&w=majority > .env
-                                    echo PORT=5000 >> .env
-                                    echo JWT_SECRET='BuddyBrownie' >> .env
-                                    docker-compose up -d --build
-                                    """
-                                }
-                            }
-                        )
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
-                }
-            }
-        }
+        // stage('Run Docker Containers in Parallel - Backend') {
+        //     steps {
+        //         script {
+        //             try {
+        //                 // Running both tasks in parallel: Model and Backend
+        //                 parallel (
+        //                     "Run Model Container": {
+        //                         dir('model') {
+        //                             bat """
+        //                             docker-compose down
+        //                             echo SERP_API_KEY=f9b77c862ea167d8effb2f7e93d918c28bdc3000fffdd50fd514fc7160c1a61a > .env
+        //                             echo GROQ_API_KEY=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 >> .env
+        //                             echo YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA >> .env
+        //                             echo HUGGINGFACE_API_KEY=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 >> .env
+        //                             docker-compose up -d --build
+        //                             """
+        //                         }
+        //                     },
+        //                     "Run Backend Container": {
+        //                         dir('backend') {
+        //                             bat """
+        //                             docker-compose down
+        //                             echo MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true^&w=majority > .env
+        //                             echo PORT=5000 >> .env
+        //                             echo JWT_SECRET='BuddyBrownie' >> .env
+        //                             docker-compose up -d --build
+        //                             """
+        //                         }
+        //                     }
+        //                 )
+        //             } catch (Exception e) {
+        //                 currentBuild.result = 'FAILURE'
+        //                 throw e
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Configure Frontend and Run') {
-            steps {
-                script {
-                    dir('frontend') {
-                        bat """
-                        docker-compose down
-                        echo VITE_GOOGLE_CLIENT_ID=381230721825-bgkpl6in88b5o05hhi537qp4vf9bgqo1.apps.googleusercontent.com > .env
-                        docker-compose up --build
-                        """
-                    }
-                }
-            }
-        }
-    }
+        // stage('Configure Frontend and Run') {
+        //     steps {
+        //         script {
+        //             dir('frontend') {
+        //                 bat """
+        //                 docker-compose down
+        //                 echo VITE_GOOGLE_CLIENT_ID=381230721825-bgkpl6in88b5o05hhi537qp4vf9bgqo1.apps.googleusercontent.com > .env
+        //                 docker-compose up --build
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
+    // }
 
     post {
         success {
