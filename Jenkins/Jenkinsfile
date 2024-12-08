@@ -53,10 +53,10 @@ pipeline {
                                 dir('model') {
                                     bat """
                                     docker-compose down
-                                    echo SERP_API_KEY=f9b77c862ea167d8effb2f7e93d918c28bdc3000fffdd50fd514fc7160c1a61a > .env
-                                    echo GROQ_API_KEY=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 >> .env
-                                    echo YOUTUBE_API_KEY=AIzaSyBmXn2FOp806pR9zsWJOSxYeF5rgMx6UQA >> .env
-                                    echo HUGGINGFACE_API_KEY=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 >> .env
+                                    echo SERP_API_KEY=<YOUR_SERPAPI_KEY> > .env
+                                    echo GROQ_API_KEY=<YOUR_GROQ_APIKEY> >> .env
+                                    echo YOUTUBE_API_KEY=<YOUR_YOUTUBE_V3_APIKEY> >> .env
+                                    echo HUGGINGFACE_API_KEY=<YOUR_HUGGINGFACE_APIKEY> >> .env
                                     docker-compose up -d --build
                                     """
                                 }
@@ -65,7 +65,7 @@ pipeline {
                                 dir('backend') {
                                     bat """
                                     docker-compose down
-                                    echo MONGO_URI=mongodb+srv://username1:eWJeQrOM4OdkU9Oi@cluster0.dpbpr.mongodb.net/?retryWrites=true^&w=majority > .env
+                                    echo MONGO_URI=<YOUR_MONGO_URI> > .env
                                     echo PORT=5000 >> .env
                                     echo JWT_SECRET='BuddyBrownie' >> .env
                                     docker-compose up -d --build
@@ -87,7 +87,7 @@ pipeline {
                     dir('frontend') {
                         bat """
                         docker-compose down
-                        echo VITE_GOOGLE_CLIENT_ID=381230721825-bgkpl6in88b5o05hhi537qp4vf9bgqo1.apps.googleusercontent.com > .env
+                        echo VITE_GOOGLE_CLIENT_ID=<ADD_YOUR_VITE_GOOGLE_CLIENT_ID> > .env
                         docker-compose up --build
                         """
                     }
